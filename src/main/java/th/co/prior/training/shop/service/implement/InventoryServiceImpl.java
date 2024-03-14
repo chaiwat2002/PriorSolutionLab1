@@ -105,4 +105,13 @@ public class InventoryServiceImpl implements InventoryService {
         }
     }
 
+    public void setOnMarket(InventoryEntity inventory ,boolean value){
+        try{
+            inventory.setOnMarket(value);
+            this.inventoryRepository.save(inventory);
+        } catch (Exception e) {
+            LOGGER.error("error: {}", e.getMessage());
+        }
+    }
+
 }

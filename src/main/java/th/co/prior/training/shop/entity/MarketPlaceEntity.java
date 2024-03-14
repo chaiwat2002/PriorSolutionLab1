@@ -24,7 +24,7 @@ public class MarketPlaceEntity {
     @Column(name = "price")
     private double price;
 
-    @Column(name = "is_sold")
+    @Column(name = "is_sold", columnDefinition = "boolean default false")
     private boolean isSold;
 
 }

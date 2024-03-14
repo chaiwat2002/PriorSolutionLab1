@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -81,8 +82,8 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
                 marketPlace.setCharacter(character);
                 marketPlace.setInventory(inventory);
                 marketPlace.setPrice(price);
-                marketPlace.setSold(false);
                 this.marketPlaceRepository.save(marketPlace);
+                this.inventoryService.setOnMarket(inventory, true);
             }
         } catch (Exception e) {
             LOGGER.error("error: {}", e.getMessage());
@@ -136,15 +137,16 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
         try {
             MarketPlaceEntity marketPlaces = this.getMarketPlaceById(itemId).getData();
             CharacterEntity character = this.characterService.getCharacterById(characterId).getData();
-            InventoryEntity inventory = this.inventoryService.getInventoryById(itemId).getData();
+            InventoryEntity inventory = this.inventoryService.getInventoryById(marketPlaces.getInventory().getId()).getData();
 
-            if(Objects.nonNull(character) && Objects.nonNull(inventory) && Objects.nonNull(marketPlaces)) {
+            if(Objects.nonNull(character) && Objects.nonNull(inventory)) {
                 if (!marketPlaces.isSold()) {
                     if (marketPlaces.getPrice() <= price) {
                         this.accountService.depositBalance(marketPlaces.getCharacter().getId(), price);
                         this.accountService.withdrawBalance(character.getId(), price);
 
                         this.inventoryService.changeOwner(character, inventory);
+                        this.inventoryService.setOnMarket(inventory, false);
 
                         marketPlaces.setSold(true);
                         this.marketPlaceRepository.save(marketPlaces);
@@ -177,7 +179,7 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
 
     private boolean checkItemIdIsNotEquals(List<MarketPlaceEntity> market, InventoryEntity inventory) {
         return Optional.ofNullable(market)
-                .map(m -> m.isEmpty() || m.stream().anyMatch(e -> !e.getInventory().getId().equals(inventory.getId())))
+                .map(m -> m.isEmpty() || m.stream().noneMatch(e -> e.getInventory().isOnMarket()))
                 .orElse(false);
     }
 }

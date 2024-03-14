@@ -19,6 +19,9 @@ public class InventoryEntity {
     @Column(name = "item_name")
     private String name;
 
+    @Column(name = "on_market", columnDefinition = "boolean default false")
+    private boolean onMarket;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "character_id", nullable = false)
     private CharacterEntity character;

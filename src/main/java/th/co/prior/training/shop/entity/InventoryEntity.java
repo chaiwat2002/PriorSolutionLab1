@@ -21,6 +21,17 @@ public class InventoryEntity {
 
     @Column(name = "on_market", columnDefinition = "boolean default false")
     private boolean onMarket;
+<<<<<<< HEAD
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "character_id", nullable = false)
+    private CharacterEntity character;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "monster_id", nullable = false)
+    private MonsterEntity monster;
+=======
+>>>>>>> develop
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "inventory", cascade = CascadeType.ALL)

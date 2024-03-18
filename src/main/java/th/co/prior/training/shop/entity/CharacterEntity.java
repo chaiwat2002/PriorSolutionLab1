@@ -12,22 +12,30 @@ import java.util.Set;
 public class CharacterEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "character_id")
     private Integer id;
 
     @Column(name = "name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "level_id", referencedColumnName = "level_id")
+    private LevelEntity level;
+
     @JsonIgnore
-    @OneToMany(mappedBy = "character")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "character", cascade = CascadeType.ALL)
+    private AccountEntity account;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "character", cascade = CascadeType.ALL)
     private Set<InventoryEntity> inventory;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "character")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "character", cascade = CascadeType.ALL)
     private Set<MarketPlaceEntity> marketPlace;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "character")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "character", cascade = CascadeType.ALL)
     private Set<InboxEntity> inbox;
 }

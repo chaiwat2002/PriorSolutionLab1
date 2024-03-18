@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title POST /prior/api/v1/character/create
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : POST /prior/api/v1/character/create
+a->a : Validate inputs
+
+alt Valid inputs
+    a->d : Find character by name
+    a->a : Validate character
+
+    alt Character not found
+        a->d : Insert into character
+        d-->a : Character data
+        a->d: Insert into account
+        a->u : 201 Created
+        a->u : "Successfully created data"
+        a->u : JSON Character data
+    else Character found
+        a->u : 400 Bad Request
+        a->u : "Character already exists"
+    end
+else Invalid inputs
+    a->u : 400 Bad Request
+    a->u : "Invalid input data. Please check your request"
+end
+
+@enduml
+

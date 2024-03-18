@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title POST /prior/api/v1/monster/create
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : POST /prior/api/v1/monster/create
+a->d : Find monster by name or drop item
+a->a : Validate monster
+
+alt Monster not found
+    a->d : Insert into monster
+    d-->a : Monster data
+    a->u : 201 Created
+    a->u : "Successfully created data"
+    a->u : JSON Monster data
+else Monster found
+    a->u : 400 Bad Request
+    a->u : "Monster with this name or drop item already exists"
+end
+
+@enduml

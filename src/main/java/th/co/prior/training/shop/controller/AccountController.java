@@ -2,23 +2,48 @@ package th.co.prior.training.shop.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import th.co.prior.training.shop.entity.AccountEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
-import th.co.prior.training.shop.service.implement.AccountServiceImpl;
+import org.springframework.web.bind.annotation.*;
+import th.co.prior.training.shop.model.AccountModel;
+import th.co.prior.training.shop.model.ResponseModel;
+import th.co.prior.training.shop.request.AccountRequest;
+import th.co.prior.training.shop.service.AccountService;
 
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/prior/api/v1")
 public class AccountController {
 
-    private final AccountServiceImpl accountService;
+    private final AccountService accountService;
 
     @GetMapping("/account")
-    public ResponseEntity<ResponseModal<List<AccountEntity>>> getAccount(){
-        ResponseModal<List<AccountEntity>> response = this.accountService.getAllAccount();
+    public ResponseEntity<ResponseModel<List<AccountModel>>> getAccount(){
+        ResponseModel<List<AccountModel>> response = this.accountService.getAllAccount();
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/account/{id}")
+    public ResponseEntity<ResponseModel<AccountModel>> getAccountById(@PathVariable Integer id){
+        ResponseModel<AccountModel> response = this.accountService.getAccountById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PostMapping("/account/create")
+    public ResponseEntity<ResponseModel<AccountModel>> createAccount(@RequestBody AccountRequest request){
+        ResponseModel<AccountModel> response = this.accountService.createAccount(request.getCharacterId(), request.getBalance());
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/account/update/{id}")
+    public ResponseEntity<ResponseModel<AccountModel>> updateAccount(@PathVariable Integer id, @RequestBody AccountRequest request){
+        ResponseModel<AccountModel> response = this.accountService.updateAccount(id, request.getBalance());
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/account/delete/{id}")
+    public ResponseEntity<ResponseModel<AccountModel>> deleteAccount(@PathVariable Integer id){
+        ResponseModel<AccountModel> response = this.accountService.deleteAccount(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

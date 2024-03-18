@@ -1,42 +1,45 @@
 package th.co.prior.training.shop.service.implement;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InboxEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.InboxModel;
+import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.InboxRepository;
 import th.co.prior.training.shop.service.InboxService;
+import th.co.prior.training.shop.units.InboxUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class InboxServiceImpl implements InboxService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InboxServiceImpl.class);
     private final InboxRepository inboxRepository;
-    private final CharacterServiceImpl characterService;
+    private final InboxUtils inboxUtils;
 
     @Override
-    public ResponseModal<List<InboxEntity>> getAllInbox() {
-        ResponseModal<List<InboxEntity>> result = new ResponseModal<>();
+    public ResponseModel<List<InboxModel>> getAllInbox() {
+        ResponseModel<List<InboxModel>> result = new ResponseModel<>();
         result.setStatus(404);
-        result.setDescription("Not Found!");
+        result.setMessage("Not Found");
 
         try {
             List<InboxEntity> inboxes = this.inboxRepository.findAll();
 
             if(inboxes.iterator().hasNext()) {
                 result.setStatus(200);
-                result.setDescription("OK");
-                result.setData(inboxes);
+                result.setMessage("OK");
+                result.setDescription("Successfully retrieved inboxes information.");
+                result.setData(this.inboxUtils.toDTOList(inboxes));
+            } else {
+                throw new NullPointerException();
             }
+        } catch (NullPointerException e){
+            result.setDescription("Inbox not found!");
         } catch (Exception e) {
             result.setStatus(500);
+            result.setMessage("Internal Server Error");
             result.setDescription(e.getMessage());
         }
 
@@ -44,18 +47,41 @@ public class InboxServiceImpl implements InboxService {
     }
 
     @Override
-    public void addInbox(Integer id, String message) {
-        try {
-            CharacterEntity character = characterService.getCharacterById(id).getData();
+    public ResponseModel<InboxModel> getInboxById(Integer id) {
+        ResponseModel<InboxModel> result = new ResponseModel<>();
+        result.setStatus(404);
+        result.setMessage("Not Found");
 
-            if(Objects.nonNull(character)) {
-                InboxEntity inbox = new InboxEntity();
-                inbox.setCharacter(character);
-                inbox.setMessage(message);
-                this.inboxRepository.save(inbox);
-            }
+        try {
+            InboxEntity inboxes = this.inboxRepository.findById(id).orElseThrow(() -> new NullPointerException("Inbox not found!"));
+
+            result.setStatus(200);
+            result.setMessage("OK");
+            result.setDescription("Successfully retrieved inboxes information.");
+            result.setData(this.inboxUtils.toDTO(inboxes));
+        }catch (NullPointerException e){
+            result.setDescription(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
+            result.setStatus(500);
+            result.setMessage("Internal Server Error");
+            result.setDescription(e.getMessage());
         }
+
+        return result;
+    }
+
+    @Override
+    public ResponseModel<InboxModel> createInbox(Integer characterId, String message) {
+        return null;
+    }
+
+    @Override
+    public ResponseModel<InboxModel> updateInbox(Integer id, String message) {
+        return null;
+    }
+
+    @Override
+    public ResponseModel<InboxModel> deleteInbox(Integer id) {
+        return null;
     }
 }

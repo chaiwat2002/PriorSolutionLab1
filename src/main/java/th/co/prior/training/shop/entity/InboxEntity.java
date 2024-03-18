@@ -9,12 +9,12 @@ import lombok.Data;
 public class InboxEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inbox_id")
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "recipient")
+    @ManyToOne
+    @JoinColumn(name = "recipient", referencedColumnName = "character_id")
     private CharacterEntity character;
 
     @Column(name = "message")

@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title POST /prior/api/v1/account/create
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : POST /prior/api/v1/account/create
+a->d : Find character by id
+
+alt Character found
+    d-->a : Character data
+    a->d : Find account by character id
+    a->a : Validate account
+
+    alt Account not found
+        a->d : Insert into account
+        d-->a : Account data
+        a->u : 201 Created
+        a->u : "Successfully created data"
+        a->u : JSON Account data
+    else Account found
+        a->u : 400 Bad Request
+        a->u : "Character already has an account"
+    end
+
+else Character not found
+    a->u : 400 Bad Request
+    a->u : "Character not found"
+end
+
+
+@enduml
+

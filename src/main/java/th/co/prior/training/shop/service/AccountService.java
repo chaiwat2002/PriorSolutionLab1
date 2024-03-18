@@ -1,14 +1,18 @@
 package th.co.prior.training.shop.service;
 
-import th.co.prior.training.shop.entity.AccountEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.AccountModel;
+import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 
 public interface AccountService {
-    ResponseModal<List<AccountEntity>> getAllAccount();
+    ResponseModel<List<AccountModel>> getAllAccount();
 
-    void depositBalance(Integer id, double balance);
+    ResponseModel<AccountModel> getAccountById(Integer id);
 
-    void withdrawBalance(Integer id, double balance);
+    ResponseModel<AccountModel> createAccount(Integer characterId, double balance);
+
+    ResponseModel<AccountModel> updateAccount(Integer id, double balance);
+
+    ResponseModel<AccountModel> deleteAccount(Integer id);
 }

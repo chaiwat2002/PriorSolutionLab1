@@ -12,20 +12,20 @@ import java.util.Set;
 public class MonsterEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "monster_id")
     private Integer id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "health")
-    private Integer health;
+    @Column(name = "max_health")
+    private Integer maxHealth;
 
     @Column(name = "drop_item")
     private String dropItem;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "monster")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "monster", cascade = CascadeType.ALL)
     private Set<InventoryEntity> itemId;
 }

@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title POST /prior/api/v1/inventory/create
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : POST /prior/api/v1/inventory/create
+a->d : Find character by id
+a->a : Validate character
+
+alt Character found
+    d-->a : Character data
+    a->d : Find monster by id
+    a->a : Validate monster
+
+    alt Monster found
+        d-->a : Monster data
+        a->a : Validate equals item
+
+        alt Item name exists
+            a->d : Insert into inventory
+            d-->a : Inventory data
+            a->u : 201 Created
+            a->u : "Successfully created data"
+            a->u : JSON Inventory data
+            else Item name is unique
+            a->u : 400 Bad Request
+            a->u : "Item not found"
+        end
+
+    else Monster not found
+        a->u : 400 Bad Request
+        a->u : "Monster not found"
+    end
+
+else Character not found
+    a->u : 400 Bad Request
+    a->u : "Character not found"
+end
+
+@enduml

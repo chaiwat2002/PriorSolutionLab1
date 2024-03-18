@@ -1,13 +1,18 @@
 package th.co.prior.training.shop.service;
 
-import th.co.prior.training.shop.entity.InboxEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.InboxModel;
+import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 
 public interface InboxService {
-    ResponseModal<List<InboxEntity>> getAllInbox();
+    ResponseModel<List<InboxModel>> getAllInbox();
 
-    void addInbox(Integer id, String message);
+    ResponseModel<InboxModel> getInboxById(Integer id);
 
+    ResponseModel<InboxModel> createInbox(Integer characterId, String message);
+
+    ResponseModel<InboxModel> updateInbox(Integer id, String message);
+
+    ResponseModel<InboxModel> deleteInbox(Integer id);
 }

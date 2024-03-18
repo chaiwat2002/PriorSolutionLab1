@@ -1,48 +1,51 @@
 package th.co.prior.training.shop.service.implement;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import th.co.prior.training.shop.entity.AccountEntity;
 import th.co.prior.training.shop.entity.CharacterEntity;
-import th.co.prior.training.shop.entity.InboxEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
 import th.co.prior.training.shop.entity.MarketPlaceEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.InventoryModel;
+import th.co.prior.training.shop.model.MarketPlaceModel;
+import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.MarketPlaceRepository;
-import th.co.prior.training.shop.service.MarketPlaceService;
+import th.co.prior.training.shop.service.*;
+import th.co.prior.training.shop.units.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class MarketPlaceServiceImpl implements MarketPlaceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlaceServiceImpl.class);
+    private final EntityUtils entityUtils;
     private final MarketPlaceRepository marketPlaceRepository;
-    private final CharacterServiceImpl characterService;
-    private final InventoryServiceImpl inventoryService;
-    private final InboxServiceImpl inboxService;
-    private final AccountServiceImpl accountService;
+    private final MarketPlaceUtils marketPlaceUtils;
+    private final CharacterUtils characterUtils;
+    private final InventoryUtils inventoryUtils;
+    private final InboxUtils inboxUtils;
+    private final AccountUtils accountUtils;
 
     @Override
-    public ResponseModal<List<MarketPlaceEntity>> getAllMarkerPlace() {
-        ResponseModal<List<MarketPlaceEntity>> result = new ResponseModal<>();
+    public ResponseModel<List<MarketPlaceModel>> getAllMarkerPlace() {
+        ResponseModel<List<MarketPlaceModel>> result = new ResponseModel<>();
         result.setStatus(404);
-        result.setDescription("Not Found!");
+        result.setMessage("Not Found!");
 
         try {
             List<MarketPlaceEntity> marketPlaces = this.marketPlaceRepository.findAll();
 
-            if(marketPlaces.iterator().hasNext()) {
+            if (marketPlaces.iterator().hasNext()) {
                 result.setStatus(200);
-                result.setDescription("OK");
-                result.setData(marketPlaces);
+                result.setMessage("OK");
+                result.setDescription("Successfully retrieved markets information.");
+                result.setData(this.marketPlaceUtils.toDTOList(marketPlaces));
+            } else {
+                throw new NullPointerException();
             }
+        } catch (NullPointerException e){
+            result.setDescription("Marketplace not found!");
         } catch (Exception e) {
             result.setStatus(500);
             result.setDescription(e.getMessage());
@@ -52,19 +55,23 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
     }
 
     @Override
-    public ResponseModal<MarketPlaceEntity> getMarketPlaceById(Integer id) {
-        ResponseModal<MarketPlaceEntity> result = new ResponseModal<>();
+    public ResponseModel<MarketPlaceModel> getMarketPlaceById(Integer id) {
+        ResponseModel<MarketPlaceModel> result = new ResponseModel<>();
         result.setStatus(404);
-        result.setDescription("Not Found!");
+        result.setMessage("Not Found!");
 
         try {
-            MarketPlaceEntity marketPlaces = this.marketPlaceRepository.findById(id).orElseThrow(() -> new RuntimeException("Market Place not found!"));
+            MarketPlaceEntity marketPlaces = this.marketPlaceRepository.findById(id).orElseThrow(() -> new NullPointerException("Marketplace not found!"));
 
             result.setStatus(200);
-            result.setDescription("OK");
-            result.setData(marketPlaces);
+            result.setMessage("OK");
+            result.setDescription("Successfully retrieved market information.");
+            result.setData(this.marketPlaceUtils.toDTO(marketPlaces));
+        } catch (NullPointerException e){
+            result.setDescription(e.getMessage());
         } catch (Exception e) {
             result.setStatus(500);
+            result.setMessage("Internal Server Error");
             result.setDescription(e.getMessage());
         }
 
@@ -72,114 +79,126 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
     }
 
     @Override
-    public void addMarketPlace(Integer characterId, Integer inventoryId, double price) {
-        try {
-            CharacterEntity character = this.characterService.getCharacterById(characterId).getData();
-            InventoryEntity inventory = this.inventoryService.getInventoryById(inventoryId).getData();
-
-            if(Objects.nonNull(character) && Objects.nonNull(inventory)) {
-                MarketPlaceEntity marketPlace = new MarketPlaceEntity();
-                marketPlace.setCharacter(character);
-                marketPlace.setInventory(inventory);
-                marketPlace.setPrice(price);
-                this.marketPlaceRepository.save(marketPlace);
-                this.inventoryService.setOnMarket(inventory, true);
-            }
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
-    }
-
-    @Override
-    public ResponseModal<String> sellItem(Integer characterId, Integer itemId, double price) {
-        ResponseModal<String> result = new ResponseModal<>();
-        result.setStatus(404);
-        result.setDescription("Not Found!");
-        result.setData("Item not found in Inventory.");
+    public ResponseModel<InventoryModel> buyItem(Integer characterId, Integer itemId) {
+        ResponseModel<InventoryModel> result = new ResponseModel<>();
+        result.setStatus(400);
+        result.setMessage("Bad Request");
 
         try {
-            CharacterEntity character = this.characterService.getCharacterById(characterId).getData();
-            InventoryEntity inventory = this.inventoryService.getInventoryById(itemId).getData();
-            List<MarketPlaceEntity> marketPlaces = this.marketPlaceRepository.findAll();
+            MarketPlaceEntity marketPlaces = this.marketPlaceUtils.findMarketPlaceById(itemId);
+            CharacterEntity character = this.characterUtils.findCharacterById(characterId);
+            InventoryEntity inventory = this.inventoryUtils.findInventoryById(marketPlaces.getInventory().getId());
+            AccountEntity account = this.accountUtils.findAccountById(character.getAccount().getId());
 
-            if(Objects.nonNull(character) && Objects.nonNull(inventory) && inventory.getCharacter().equals(character)) {
-                if(this.checkItemIdIsNotEquals(marketPlaces, inventory)) {
-                        this.addMarketPlace(character.getId(), inventory.getId(), price);
-
-                        this.inboxService.addInbox(
-                                characterId,
-                                "Your " + inventory.getName() + " has been added to the market.");
-
-                        result.setStatus(200);
-                        result.setDescription("OK");
-                        result.setData("Successfully added.");
-                } else {
-                    result.setStatus(400);
-                    result.setDescription("Bad Request");
-                    result.setData("You already have " + inventory.getName() + " on the market.");
-                }
-            }
-        } catch (Exception e) {
-            result.setStatus(500);
-            result.setDescription(e.getMessage());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ResponseModal<String> buyItem(Integer characterId, Integer itemId, double price) {
-        ResponseModal<String> result = new ResponseModal<>();
-        result.setStatus(404);
-        result.setDescription("Not Found!");
-        result.setData("There are no products for sale on the market.");
-
-        try {
-            MarketPlaceEntity marketPlaces = this.getMarketPlaceById(itemId).getData();
-            CharacterEntity character = this.characterService.getCharacterById(characterId).getData();
-            InventoryEntity inventory = this.inventoryService.getInventoryById(marketPlaces.getInventory().getId()).getData();
-
-            if(Objects.nonNull(character) && Objects.nonNull(inventory)) {
+            if (this.entityUtils.hasEntity(character, inventory)) {
                 if (!marketPlaces.isSold()) {
-                    if (marketPlaces.getPrice() <= price) {
-                        this.accountService.depositBalance(marketPlaces.getCharacter().getId(), price);
-                        this.accountService.withdrawBalance(character.getId(), price);
+                    if (marketPlaces.getPrice() <= account.getBalance()) {
+                        this.accountUtils.depositBalance(marketPlaces.getCharacter().getId(), marketPlaces.getPrice());
+                        this.accountUtils.withdrawBalance(character.getId(), marketPlaces.getPrice());
 
-                        this.inventoryService.changeOwner(character, inventory);
-                        this.inventoryService.setOnMarket(inventory, false);
+                        this.inventoryUtils.changeOwner(character, inventory);
+                        this.inventoryUtils.setOnMarket(inventory, false);
 
                         marketPlaces.setSold(true);
                         this.marketPlaceRepository.save(marketPlaces);
 
-                        this.inboxService.addInbox(
+                        this.inboxUtils.addInbox(
                                 marketPlaces.getCharacter().getId(),
                                 "Your " + marketPlaces.getInventory().getName() + " has been sold.");
 
                         result.setStatus(200);
-                        result.setDescription("OK");
-                        result.setData("Successfully purchased a " + marketPlaces.getInventory().getName() + ".");
+                        result.setMessage("OK");
+                        result.setDescription("Successfully purchased a " + marketPlaces.getInventory().getName() + ".");
+                        result.setData(this.inventoryUtils.toDTO(marketPlaces.getInventory()));
                     } else {
                         result.setStatus(400);
-                        result.setDescription("Bad Request");
-                        result.setData("Your balance is not enough.");
+                        result.setMessage("Bad Request");
+                        result.setDescription("Your balance is insufficient.");
                     }
                 } else {
                     result.setStatus(400);
-                    result.setDescription("Bad Request");
-                    result.setData("The " + marketPlaces.getInventory().getName() + " has already been sold.");
+                    result.setMessage("Bad Request");
+                    result.setDescription("The " + marketPlaces.getInventory().getName() + " has already been sold.");
                 }
+            } else {
+                throw new NullPointerException();
             }
+        } catch (NullPointerException e){
+            result.setDescription("There are no products for sale on the market.");
         } catch (Exception e) {
             result.setStatus(500);
+            result.setMessage("Internal Server Error");
             result.setDescription(e.getMessage());
         }
 
         return result;
     }
 
-    private boolean checkItemIdIsNotEquals(List<MarketPlaceEntity> market, InventoryEntity inventory) {
-        return Optional.ofNullable(market)
-                .map(m -> m.isEmpty() || m.stream().noneMatch(e -> e.getInventory().isOnMarket()))
-                .orElse(false);
+    @Override
+    public ResponseModel<MarketPlaceModel> sellItem(Integer characterId, Integer itemId, double price) {
+        ResponseModel<MarketPlaceModel> result = new ResponseModel<>();
+        result.setStatus(400);
+        result.setMessage("Bad Request");
+
+        try {
+            CharacterEntity character = this.characterUtils.findCharacterById(characterId);
+            InventoryEntity inventory = this.inventoryUtils.findInventoryById(itemId);
+            MarketPlaceEntity marketPlaces = this.marketPlaceUtils.findMarketPlaceByInventoryId(inventory.getId());
+
+            if (this.marketPlaceUtils.hasOwner(character, inventory)) {
+                if (this.marketPlaceUtils.checkItemIdIsNotEquals(marketPlaces, inventory)) {
+                    this.marketPlaceUtils.addMarketPlace(character.getId(), inventory.getId(), price);
+
+                    this.inboxUtils.addInbox(
+                            characterId,
+                            "Your " + inventory.getName() + " has been added to the market.");
+
+                    result.setStatus(201);
+                    result.setMessage("Created");
+                    result.setDescription("You have successfully added a " + inventory.getName() + " to your inventory.");
+                    result.setData(this.marketPlaceUtils.toDTO(
+                            this.marketPlaceUtils.findMarketPlaceByInventoryId(inventory.getId())));
+                } else {
+                    result.setStatus(400);
+                    result.setMessage("Bad Request");
+                    result.setDescription("You already have " + inventory.getName() + " on the market.");
+                }
+            } else {
+                throw new NullPointerException();
+            }
+        } catch (NullPointerException e){
+            result.setDescription("Item not found in Inventory.");
+        } catch (Exception e) {
+            result.setStatus(500);
+            result.setMessage("Internal Server Error");
+            result.setDescription(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseModel<MarketPlaceModel> deleteMarketPlace(Integer id) {
+        ResponseModel<MarketPlaceModel> result = new ResponseModel<>();
+        result.setStatus(400);
+        result.setMessage("Bad Request");
+
+        try {
+            this.marketPlaceRepository.findById(id).orElseThrow(() -> new NullPointerException("Marketplace not found!"));
+            this.marketPlaceRepository.deleteById(id);
+
+            result.setStatus(200);
+            result.setMessage("OK");
+            result.setDescription("Market data has been deleted.");
+            result.setData(null);
+        } catch (NullPointerException e){
+            result.setDescription(e.getMessage());
+        } catch (Exception e) {
+            result.setStatus(500);
+            result.setMessage("Internal Server Error");
+            result.setDescription(e.getMessage());
+        }
+
+        return result;
     }
 }

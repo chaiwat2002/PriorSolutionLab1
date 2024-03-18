@@ -1,16 +1,19 @@
 package th.co.prior.training.shop.service;
 
-import th.co.prior.training.shop.entity.InventoryEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.InventoryModel;
+import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 
 public interface InventoryService {
 
-    ResponseModal<List<InventoryEntity>> getAllInventory();
+    ResponseModel<List<InventoryModel>> getAllInventory();
 
-    ResponseModal<InventoryEntity> getInventoryById(Integer id);
+    ResponseModel<InventoryModel> getInventoryById(Integer id);
 
-    void addInventory(String name, Integer characterId, Integer monsterId);
+    ResponseModel<InventoryModel> createInventory(String name, Integer characterId, Integer monsterId);
 
+    ResponseModel<InventoryModel> updateInventory(Integer id, String name, Integer characterId, Integer monsterId);
+
+    ResponseModel<InventoryModel> deleteInventory(Integer id);
 }

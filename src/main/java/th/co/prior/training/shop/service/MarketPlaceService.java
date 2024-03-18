@@ -1,19 +1,20 @@
 package th.co.prior.training.shop.service;
 
-import th.co.prior.training.shop.entity.MarketPlaceEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.InventoryModel;
+import th.co.prior.training.shop.model.MarketPlaceModel;
+import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 
 public interface MarketPlaceService {
 
-    ResponseModal<List<MarketPlaceEntity>> getAllMarkerPlace();
+    ResponseModel<List<MarketPlaceModel>> getAllMarkerPlace();
 
-    ResponseModal<MarketPlaceEntity> getMarketPlaceById(Integer id);
+    ResponseModel<MarketPlaceModel> getMarketPlaceById(Integer id);
 
-    void addMarketPlace(Integer characterId, Integer inventoryId, double price);
+    ResponseModel<InventoryModel> buyItem(Integer characterId, Integer itemId);
 
-    ResponseModal<String> sellItem(Integer characterId, Integer itemId, double price);
+    ResponseModel<MarketPlaceModel> sellItem(Integer characterId, Integer itemId, double price);
 
-    ResponseModal<String> buyItem(Integer characterId, Integer itemId, double price);
+    ResponseModel<MarketPlaceModel> deleteMarketPlace(Integer id);
 }

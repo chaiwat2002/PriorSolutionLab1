@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title DELETE /prior/api/v1/inventory/delete/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : DELETE /prior/api/v1/inventory/delete/{id}
+a->d: Find inventory by id
+a->a : Validate inventory
+
+alt Inventory found
+    a->d : Delete inventory
+    a->u : 200 OK
+    a->u : "Successfully deleted data"
+else Inventory not found
+    a->u : 404 Not Found
+    a->u : "Inventory not found"
+end
+
+@enduml

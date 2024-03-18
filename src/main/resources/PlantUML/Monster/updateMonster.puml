@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title POST /prior/api/v1/monster/update/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : POST /prior/api/v1/monster/update/{id}
+a->d : Find monster by id
+a->a : Validate monster
+
+alt Monster found
+    d-->a : Default monster data
+    a->d : Update monster
+    d-->a : New monster data
+    a->u : 200 OK
+    a->u : "Successfully updated data"
+    a->u : JSON Monster data
+else Monster not found
+    a->u : 400 Bad Request
+    a->u : "Monster not found"
+end
+
+@enduml

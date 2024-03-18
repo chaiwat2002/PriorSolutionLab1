@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title DELETE /prior/api/v1/character/delete/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : DELETE /prior/api/v1/character/delete/{id}
+a->d: Find character by id
+a->a : Validate character
+
+alt Character found
+    a->d : Delete character
+    a->u : 200 OK
+    a->u : "Successfully deleted data"
+else Character not found
+    a->u : 404 Not Found
+    a->u : "Character not found"
+end
+
+@enduml

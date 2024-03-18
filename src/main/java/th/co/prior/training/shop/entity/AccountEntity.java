@@ -9,7 +9,7 @@ import lombok.Data;
 public class AccountEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Integer id;
 
@@ -19,8 +19,8 @@ public class AccountEntity {
     @Column(name = "balance")
     private double balance;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "character_id")
-    private CharacterEntity characters;
+    @OneToOne
+    @JoinColumn(name = "character_id", referencedColumnName = "character_id")
+    private CharacterEntity character;
 
 }

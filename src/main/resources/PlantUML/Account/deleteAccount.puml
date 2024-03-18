@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title DELETE /prior/api/v1/account/delete/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : DELETE /prior/api/v1/account/delete/{id}
+a->d: Find account by id
+a->a : Validate account
+
+alt Account found
+    a->d : Delete account
+    a->u : 200 OK
+    a->u : "Successfully deleted data"
+else Account not found
+    a->u : 404 Not Found
+    a->u : "Account not found"
+end
+
+@enduml

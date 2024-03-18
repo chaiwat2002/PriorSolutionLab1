@@ -12,7 +12,7 @@ import java.util.Set;
 public class InventoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Integer id;
 
@@ -22,16 +22,15 @@ public class InventoryEntity {
     @Column(name = "on_market", columnDefinition = "boolean default false")
     private boolean onMarket;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "character_id", nullable = false)
-    private CharacterEntity character;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "monster_id", nullable = false)
-    private MonsterEntity monster;
-
     @JsonIgnore
-    @OneToMany(mappedBy = "inventory")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "inventory", cascade = CascadeType.ALL)
     private Set<MarketPlaceEntity> marketPlace;
 
+    @ManyToOne
+    @JoinColumn(name = "character_id", referencedColumnName = "character_id", nullable = false)
+    private CharacterEntity character;
+
+    @ManyToOne
+    @JoinColumn(name = "monster_id", referencedColumnName = "monster_id",nullable = false)
+    private MonsterEntity monster;
 }

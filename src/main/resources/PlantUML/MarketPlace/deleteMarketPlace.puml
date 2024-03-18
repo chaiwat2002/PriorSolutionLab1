@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title DELETE /prior/api/v1/market/delete/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : DELETE /prior/api/v1/market/delete/{id}
+a->d: Find market by id
+a->a : Validate market
+
+alt Market found
+    a->d : Delete market
+    a->u : 200 OK
+    a->u : "Successfully deleted data"
+else Market not found
+    a->u : 404 Not Found
+    a->u : "Market not found"
+end
+
+@enduml

@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface MonsterRepository extends JpaRepository<MonsterEntity, Integer> {
 
     Optional<MonsterEntity> findMonsterByName(String name);
+
+    Optional<MonsterEntity> findMonsterByDropItem(String dropItem);
 }

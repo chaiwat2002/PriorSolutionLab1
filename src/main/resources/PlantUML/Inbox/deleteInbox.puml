@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title DELETE /prior/api/v1/inbox/delete/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : DELETE /prior/api/v1/inbox/delete/{id}
+a->d: Find inbox by id
+a->a : Validate inbox
+
+alt Inbox found
+    a->d : Delete inbox
+    a->u : 200 OK
+    a->u : "Successfully deleted data"
+else Inbox not found
+    a->u : 404 Not Found
+    a->u : "Inbox not found"
+end
+
+@enduml

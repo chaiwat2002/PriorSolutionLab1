@@ -1,15 +1,22 @@
 package th.co.prior.training.shop.service;
 
-import th.co.prior.training.shop.entity.MonsterEntity;
-import th.co.prior.training.shop.modal.ResponseModal;
+import th.co.prior.training.shop.model.MonsterModel;
+import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 
 public interface MonsterService {
 
-    ResponseModal<List<MonsterEntity>> getAllMonster();
+    ResponseModel<List<MonsterModel>> getAllMonster();
 
-    ResponseModal<MonsterEntity> getMonsterById(Integer id);
+    ResponseModel<MonsterModel> getMonsterById(Integer id);
 
-    ResponseModal<String> attackMonster(Integer characterId, String monsterName, Integer damage);
+    ResponseModel<MonsterModel> createMonster(String name, Integer maxHealth, String dropItem);
+
+
+    ResponseModel<MonsterModel> updateMonster(Integer id, String name, Integer maxHealth, String dropItem);
+
+    ResponseModel<MonsterModel> deleteMonster(Integer id);
+
+    ResponseModel<MonsterModel> attackMonster(Integer characterId, String monsterName);
 }

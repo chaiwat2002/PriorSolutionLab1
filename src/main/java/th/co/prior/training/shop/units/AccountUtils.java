@@ -54,8 +54,10 @@ public class AccountUtils {
     }
 
     public AccountEntity createAccount(CharacterEntity character) {
-        this.findAccountByCharacterId(character.getId())
-                .orElseThrow(() -> new ExceptionModel("You already have an account.", 400));
+        if(this.accountRepository.findAccountByCharacterId(character.getId()).isPresent()){
+            throw new ExceptionModel("You already have an account.", 400);
+        }
+
         AccountEntity account = new AccountEntity();
         account.setAccountNumber(this.getAccountNumber());
         account.setBalance(3000.00);

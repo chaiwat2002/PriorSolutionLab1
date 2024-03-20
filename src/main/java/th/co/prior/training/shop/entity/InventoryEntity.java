@@ -16,7 +16,7 @@ public class InventoryEntity {
     @Column(name = "item_id")
     private Integer id;
 
-    @Column(name = "item_name")
+    @Column(name = "item_name", nullable = false)
     private String name;
 
     @Column(name = "on_market", columnDefinition = "boolean default false")
@@ -31,6 +31,6 @@ public class InventoryEntity {
     private CharacterEntity character;
 
     @ManyToOne
-    @JoinColumn(name = "monster_id", referencedColumnName = "monster_id",nullable = false)
+    @JoinColumn(name = "monster_id", referencedColumnName = "monster_id", nullable = false)
     private MonsterEntity monster;
 }

@@ -14,14 +14,14 @@ public class MarketPlaceEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", nullable = false)
     private InventoryEntity inventory;
 
     @ManyToOne
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id", nullable = false)
     private CharacterEntity character;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private double price;
 
     @Column(name = "is_sold", columnDefinition = "boolean default false")

@@ -17,7 +17,7 @@ public class LevelEntity {
     @Column(name = "level_id")
     private Integer id;
 
-    @Column(name = "damage")
+    @Column(name = "damage", nullable = false)
     private Integer damage;
 
     @JsonIgnore

@@ -13,14 +13,14 @@ public class AccountEntity {
     @Column(name = "account_id")
     private Integer id;
 
-    @Column(name = "account_number")
+    @Column(name = "account_number", nullable = false)
     private String accountNumber;
 
-    @Column(name = "balance")
+    @Column(name = "balance", nullable = false)
     private double balance;
 
     @OneToOne
-    @JoinColumn(name = "character_id", referencedColumnName = "character_id")
+    @JoinColumn(name = "character_id", referencedColumnName = "character_id", nullable = false)
     private CharacterEntity character;
 
 }

@@ -74,12 +74,10 @@ public class MonsterServiceImpl<T> implements MonsterService {
         ResponseModel<MonsterModel> result = new ResponseModel<>();
 
         try {
-            Optional<MonsterEntity> monster = this.monsterUtils.findMonsterByName(name);
-            Optional<MonsterEntity> item = this.monsterUtils.findMonsterByDropItem(dropItem);
-
-            if (monster.isPresent() || item.isPresent()) {
-                throw new ExceptionModel("You already have an monster or drop item.", 400);
-            }
+            this.monsterUtils.findMonsterByName(name)
+                    .ifPresent(e -> { throw new ExceptionModel("You already have an monster.", 400); });
+            this.monsterUtils.findMonsterByDropItem(dropItem)
+                    .ifPresent(e -> { throw new ExceptionModel("You already have an drop item.", 400); });
 
             MonsterEntity saved = this.monsterUtils.createMonster(name, maxHealth, dropItem);
 

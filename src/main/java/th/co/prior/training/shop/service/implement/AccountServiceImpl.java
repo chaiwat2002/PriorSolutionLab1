@@ -1,23 +1,17 @@
 package th.co.prior.training.shop.service.implement;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.stereotype.Service;
 import th.co.prior.training.shop.entity.AccountEntity;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.model.AccountModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
-import th.co.prior.training.shop.repository.AccountRepository;
 import th.co.prior.training.shop.service.AccountService;
 import th.co.prior.training.shop.units.AccountUtils;
 import th.co.prior.training.shop.units.CharacterUtils;
-import th.co.prior.training.shop.units.EntityUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -79,6 +73,8 @@ public class AccountServiceImpl implements AccountService {
         try {
             CharacterEntity character = this.characterUtils.findCharacterById(characterId)
                     .orElseThrow(() -> new ExceptionModel("Character not found!", 404));
+            this.accountUtils.findAccountById(characterId)
+                    .ifPresent(e -> { throw new ExceptionModel("You already have an account.", 400); });
 
             AccountEntity saved = this.accountUtils.createAccount(character);
 

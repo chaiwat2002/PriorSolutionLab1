@@ -12,36 +12,36 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/prior/api/v1")
+@RequestMapping("/prior/api/v1/inbox")
 public class InboxController {
 
     private final InboxService inboxService;
 
-    @GetMapping("/inbox")
+    @GetMapping("/")
     public ResponseEntity<ResponseModel<List<InboxModel>>> getInbox() {
         ResponseModel<List<InboxModel>> response = this.inboxService.getAllInbox();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/inbox/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseModel<InboxModel>> getInboxById(@PathVariable Integer id){
         ResponseModel<InboxModel> response = this.inboxService.getInboxById(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/inbox/create")
+    @PostMapping("/")
     public ResponseEntity<ResponseModel<InboxModel>> createCharacter(@RequestBody InboxRequest request){
         ResponseModel<InboxModel> response = this.inboxService.createInbox(request.getCharacterId(), request.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping("/inbox/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseModel<InboxModel>> updateCharacter(@PathVariable Integer id, @RequestBody InboxRequest request){
         ResponseModel<InboxModel> response = this.inboxService.updateInbox(id, request.getMessage());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping("/inbox/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponseModel<InboxModel>> deleteCharacter(@PathVariable Integer id){
         ResponseModel<InboxModel> response = this.inboxService.deleteInbox(id);
         return ResponseEntity.status(response.getStatus()).body(response);

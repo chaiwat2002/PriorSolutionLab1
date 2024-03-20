@@ -12,36 +12,36 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/prior/api/v1")
+@RequestMapping("/prior/api/v1/inventory")
 public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @GetMapping("/inventory")
+    @GetMapping("/")
     public ResponseEntity<ResponseModel<List<InventoryModel>>> getInventory(){
         ResponseModel<List<InventoryModel>> response = this.inventoryService.getAllInventory();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/inventory/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseModel<InventoryModel>> getInventoryById(@PathVariable Integer id){
         ResponseModel<InventoryModel> response = this.inventoryService.getInventoryById(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/inventory/create")
+    @PostMapping("/")
     public ResponseEntity<ResponseModel<InventoryModel>> createCharacter(@RequestBody InventoryRequest request){
         ResponseModel<InventoryModel> response = this.inventoryService.createInventory(request.getName(), request.getCharacterId(), request.getMonsterId());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping("/inventory/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseModel<InventoryModel>> updateCharacter(@PathVariable Integer id, @RequestBody InventoryRequest request){
         ResponseModel<InventoryModel> response = this.inventoryService.updateInventory(id, request.getName(), request.getCharacterId(), request.getMonsterId());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping("/inventory/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponseModel<InventoryModel>> deleteCharacter(@PathVariable Integer id){
         ResponseModel<InventoryModel> response = this.inventoryService.deleteInventory(id);
         return ResponseEntity.status(response.getStatus()).body(response);

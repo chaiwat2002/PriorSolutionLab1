@@ -14,44 +14,44 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/prior/api/v1")
+@RequestMapping("/prior/api/v1/monster")
 public class MonsterController {
 
     private final MonsterService monsterService;
 
-    @GetMapping("/monster")
+    @GetMapping("/")
     public ResponseEntity<ResponseModel<List<MonsterModel>>> getMonster() {
         ResponseModel<List<MonsterModel>> response = this.monsterService.getAllMonster();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/monster/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseModel<MonsterModel>> getMonsterById(@PathVariable Integer id) {
         ResponseModel<MonsterModel> response = this.monsterService.getMonsterById(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/monster/create")
+    @PostMapping("/")
     public ResponseEntity<ResponseModel<MonsterModel>> createMonster(@RequestBody MonsterRequest request) {
         ResponseModel<MonsterModel> response = this.monsterService.createMonster(request.getName(), request.getMaxHealth(), request.getDropItem());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/monster/attack")
-    public ResponseEntity<ResponseModel<Object>> attackMonster(@RequestBody AttackRequest request) {
-        ResponseModel<Object> response = this.monsterService.attackMonster(request.getCharacterId(), request.getMonsterName());
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-    @PutMapping("/monster/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseModel<MonsterModel>> updateMonster(@PathVariable Integer id, @RequestBody MonsterRequest request){
         ResponseModel<MonsterModel> response = this.monsterService.updateMonster(id, request.getName(), request.getMaxHealth(), request.getDropItem());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping("/monster/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponseModel<MonsterModel>> deleteMonster(@PathVariable Integer id){
         ResponseModel<MonsterModel> response = this.monsterService.deleteMonster(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PostMapping("/attack")
+    public ResponseEntity<ResponseModel<Object>> attackMonster(@RequestBody AttackRequest request) {
+        ResponseModel<Object> response = this.monsterService.attackMonster(request.getCharacterId(), request.getMonsterName());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

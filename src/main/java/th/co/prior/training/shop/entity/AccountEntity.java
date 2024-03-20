@@ -19,7 +19,7 @@ public class AccountEntity {
     @Column(name = "balance", nullable = false)
     private double balance;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "character_id", referencedColumnName = "character_id", nullable = false)
     private CharacterEntity character;
 

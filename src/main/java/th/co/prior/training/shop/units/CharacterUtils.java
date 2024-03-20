@@ -50,6 +50,10 @@ public class CharacterUtils {
 
     @Transactional(rollbackOn = ExceptionModel.class)
     public CharacterEntity createCharacter(String name) {
+        if(this.characterRepository.findCharacterByName(name).isPresent()){
+            throw new ExceptionModel("Duplicate name. Please enter another name.", 400);
+        }
+
         CharacterEntity character = new CharacterEntity();
         character.setName(name);
         character.setLevel(this.levelUtils.getLevel());
@@ -59,7 +63,10 @@ public class CharacterUtils {
     }
 
     public CharacterEntity updateCharacter(CharacterEntity character, String name) {
-        this.findCharacterByName(name).orElseThrow(() -> new ExceptionModel("Duplicate name. Please enter another name.", 400));
+        if(this.characterRepository.findCharacterByName(name).isPresent()){
+            throw new ExceptionModel("Duplicate name. Please enter another name.", 400);
+        }
+
         character.setName(name);
         return this.characterRepository.save(character);
     }

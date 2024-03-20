@@ -22,7 +22,7 @@ public class InboxServiceImpl implements InboxService {
     public ResponseModel<List<InboxModel>> getAllInbox() {
         ResponseModel<List<InboxModel>> result = new ResponseModel<>();
         result.setStatus(404);
-        result.setMessage("Not Found");
+        result.setName("Not Found");
         result.setMessage("Inbox not found!");
 
         try {

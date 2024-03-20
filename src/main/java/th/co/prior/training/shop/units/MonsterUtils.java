@@ -1,21 +1,21 @@
 package th.co.prior.training.shop.units;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import th.co.prior.training.shop.entity.MonsterEntity;
 import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.repository.MonsterRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class MonsterUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MonsterUtils.class);
     private final MonsterRepository monsterRepository;
 
     public List<MonsterModel> toDTOList(List<MonsterEntity> monster) {
@@ -38,9 +38,31 @@ public class MonsterUtils {
         return monsterRepository.findAll();
     }
 
-    public MonsterEntity findMonsterById(Integer id){
-        return monsterRepository.findById(id).orElse(null);
+    public Optional<MonsterEntity> findMonsterById(Integer id){
+        return monsterRepository.findById(id);
     }
 
-    public MonsterEntity findMonsterByName(String name) { return monsterRepository.findMonsterByName(name).orElse(null); }
+    public Optional<MonsterEntity> findMonsterByName(String name) { return monsterRepository.findMonsterByName(name); }
+
+    public Optional<MonsterEntity> findMonsterByDropItem(String name) { return monsterRepository.findMonsterByDropItem(name); }
+
+    public MonsterEntity createMonster(String name, Integer maxHealth, String dropItem) {
+        MonsterEntity monster = new MonsterEntity();
+        monster.setName(name);
+        monster.setMaxHealth(maxHealth);
+        monster.setDropItem(dropItem);
+        return this.monsterRepository.save(monster);
+    }
+
+    public MonsterEntity updateMonster(MonsterEntity monster, String name, Integer maxHealth, String dropItem) {
+        monster.setName(name);
+        monster.setMaxHealth(maxHealth);
+        monster.setDropItem(dropItem);
+        return this.monsterRepository.save(monster);
+
+    }
+
+    public void deleteMonsterById(Integer id) {
+        this.monsterRepository.deleteById(id);
+    }
 }

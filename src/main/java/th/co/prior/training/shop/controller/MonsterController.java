@@ -3,6 +3,7 @@ package th.co.prior.training.shop.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.request.AttackRequest;
@@ -37,8 +38,8 @@ public class MonsterController {
     }
 
     @PostMapping("/monster/attack")
-    public ResponseEntity<ResponseModel<MonsterModel>> attackMonster(@RequestBody AttackRequest request) {
-        ResponseModel<MonsterModel> response = this.monsterService.attackMonster(request.getCharacterId(), request.getMonsterName());
+    public ResponseEntity<ResponseModel<Object>> attackMonster(@RequestBody AttackRequest request) {
+        ResponseModel<Object> response = this.monsterService.attackMonster(request.getCharacterId(), request.getMonsterName());
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

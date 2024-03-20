@@ -6,8 +6,8 @@ import lombok.Data;
 public class ResponseModel<T> {
 
     private Integer status;
+    private String name;
     private String message;
-    private String description;
     private T data;
 
 }

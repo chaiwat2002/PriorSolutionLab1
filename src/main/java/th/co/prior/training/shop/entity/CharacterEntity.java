@@ -16,11 +16,11 @@ public class CharacterEntity {
     @Column(name = "character_id")
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "level_id", referencedColumnName = "level_id")
+    @JoinColumn(name = "level_id", referencedColumnName = "level_id", nullable = false)
     private LevelEntity level;
 
     @JsonIgnore

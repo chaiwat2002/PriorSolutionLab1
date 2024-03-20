@@ -16,10 +16,10 @@ public class MonsterEntity {
     @Column(name = "monster_id")
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "max_health")
+    @Column(name = "max_health", nullable = false)
     private Integer maxHealth;
 
     @Column(name = "drop_item")

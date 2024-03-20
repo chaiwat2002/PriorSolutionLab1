@@ -13,11 +13,11 @@ public class InboxEntity {
     @Column(name = "inbox_id")
     private Integer id;
 
+    @Column(name = "message", nullable = false)
+    private String message;
+
     @ManyToOne
     @JoinColumn(name = "recipient", referencedColumnName = "character_id")
     private CharacterEntity character;
-
-    @Column(name = "message")
-    private String message;
 
 }

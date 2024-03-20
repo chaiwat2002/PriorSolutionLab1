@@ -1,26 +1,25 @@
 package th.co.prior.training.shop.units;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
 import th.co.prior.training.shop.entity.MonsterEntity;
-import th.co.prior.training.shop.model.CharacterModel;
+import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InventoryModel;
-import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.InventoryRepository;
-import th.co.prior.training.shop.service.implement.InventoryServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class InventoryUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InventoryUtils.class);
     private final EntityUtils entityUtils;
     private final MonsterUtils monsterUtils;
     private final CharacterUtils characterUtils;
@@ -47,45 +46,44 @@ public class InventoryUtils {
         return inventoryRepository.findAll();
     }
 
-    public InventoryEntity findInventoryById(Integer id){
-        return inventoryRepository.findById(id).orElse(null);
+    public Optional<InventoryEntity> findInventoryById(Integer id){
+        return inventoryRepository.findById(id);
     }
 
-    public InventoryEntity findInventoryByName(String name) { return inventoryRepository.findInventoryByName(name).orElse(null); }
+    public Optional<InventoryEntity> findInventoryByName(String name) { return inventoryRepository.findInventoryByName(name); }
 
-    public void addInventory(String name, Integer characterId, Integer monsterId) {
-        try {
-            CharacterEntity character = this.characterUtils.findCharacterById(characterId);
-            MonsterEntity monster = this.monsterUtils.findMonsterById(monsterId);
-
-            if (this.entityUtils.hasEntity(character, monster)) {
-                InventoryEntity inventory = new InventoryEntity();
-                inventory.setName(name);
-                inventory.setCharacter(character);
-                inventory.setMonster(monster);
-                inventoryRepository.save(inventory);
-            }
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+    @Transactional(rollbackOn = ExceptionModel.class)
+    public InventoryEntity createInventory(MonsterEntity monster, CharacterEntity character) {
+        InventoryEntity inventory = new InventoryEntity();
+        inventory.setName(monster.getDropItem());
+        inventory.setCharacter(character);
+        inventory.setMonster(monster);
+        return this.inventoryRepository.save(inventory);
     }
 
+    @Transactional(rollbackOn = ExceptionModel.class)
+    public InventoryEntity updateInventory(InventoryEntity inventory, String name, MonsterEntity monster, CharacterEntity character) {
+        inventory.setName(name);
+        inventory.setCharacter(character);
+        inventory.setMonster(monster);
+        return this.inventoryRepository.save(inventory);
+    }
+
+    @Transactional(rollbackOn = ExceptionModel.class)
+    public void deleteInventoryById(Integer id) {
+        this.inventoryRepository.deleteById(id);
+    }
+
+    @Transactional(rollbackOn = ExceptionModel.class)
     public void changeOwner(CharacterEntity character, InventoryEntity inventory){
-        try {
-            inventory.setCharacter(character);
-            this.inventoryRepository.save(inventory);
-
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+        inventory.setCharacter(character);
+        this.inventoryRepository.save(inventory);
     }
 
+    @Transactional(rollbackOn = ExceptionModel.class)
     public void setOnMarket(InventoryEntity inventory, boolean value){
-        try{
-            inventory.setOnMarket(value);
-            this.inventoryRepository.save(inventory);
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+        inventory.setOnMarket(value);
+        this.inventoryRepository.save(inventory);
     }
+
 }

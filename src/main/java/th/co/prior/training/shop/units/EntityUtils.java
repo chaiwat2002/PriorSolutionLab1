@@ -8,12 +8,11 @@ import java.util.stream.Stream;
 @Component
 public class EntityUtils {
 
-    @SafeVarargs
-    public final  <T> boolean hasEntity(T... entities) {
+    public boolean hasEntity(Object... entities) {
         return Stream.of(entities).allMatch(Objects::nonNull);
     }
 
-    public final boolean equals(Object a, Object b) {
+    public boolean equals(Object a, Object b) {
         return Objects.equals(a, b);
     }
 }

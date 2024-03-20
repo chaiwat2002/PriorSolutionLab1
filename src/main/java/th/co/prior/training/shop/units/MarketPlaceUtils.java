@@ -1,26 +1,29 @@
 package th.co.prior.training.shop.units;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import th.co.prior.training.shop.entity.AccountEntity;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
 import th.co.prior.training.shop.entity.MarketPlaceEntity;
+import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.MarketPlaceModel;
 import th.co.prior.training.shop.repository.MarketPlaceRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class MarketPlaceUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlaceUtils.class);
     private final EntityUtils entityUtils;
     private final MarketPlaceRepository marketPlaceRepository;
-    private final CharacterUtils characterUtils;
+    private final InboxUtils inboxUtils;
     private final AccountUtils accountUtils;
     private final InventoryUtils inventoryUtils;
 
@@ -45,32 +48,48 @@ public class MarketPlaceUtils {
         return this.marketPlaceRepository.findAll();
     }
 
-    public MarketPlaceEntity findMarketPlaceById(Integer id) {
-        return this.marketPlaceRepository.findById(id).orElse(null);
+    public Optional<MarketPlaceEntity> findMarketPlaceById(Integer id) {
+        return this.marketPlaceRepository.findById(id);
     }
 
-    public MarketPlaceEntity findMarketPlaceByInventoryId(Integer id) {
-        return this.marketPlaceRepository.findMarketPlaceByInventoryId(id).orElse(null);
+    public Optional<MarketPlaceEntity> findMarketPlaceByInventoryId(Integer id) {
+        return this.marketPlaceRepository.findMarketPlaceByInventoryId(id);
     }
 
-    public void addMarketPlace(Integer characterId, Integer inventoryId, double price) {
-        try {
-            CharacterEntity character = this.characterUtils.findCharacterById(characterId);
-            InventoryEntity inventory = this.inventoryUtils.findInventoryById(inventoryId);
+    @Transactional(rollbackOn = ExceptionModel.class)
+    public MarketPlaceEntity postItem(CharacterEntity character, InventoryEntity inventory, double price) {
+        double balance = this.accountUtils.formatDecimal(price);
+        this.inventoryUtils.setOnMarket(inventory, true);
 
-            if(this.entityUtils.hasEntity(character, inventory)) {
-                double balance = this.accountUtils.formatDecimal(price);
+        this.inboxUtils.addInbox(
+                character,
+                "Your " + inventory.getName() + " has been added to the market.");
 
-                MarketPlaceEntity marketPlace = new MarketPlaceEntity();
-                marketPlace.setCharacter(character);
-                marketPlace.setInventory(inventory);
-                marketPlace.setPrice(balance);
-                this.marketPlaceRepository.save(marketPlace);
-                this.inventoryUtils.setOnMarket(inventory, true);
-            }
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+        MarketPlaceEntity marketPlace = new MarketPlaceEntity();
+        marketPlace.setCharacter(character);
+        marketPlace.setInventory(inventory);
+        marketPlace.setPrice(balance);
+        return this.marketPlaceRepository.save(marketPlace);
+    }
+
+    @Transactional(rollbackOn = ExceptionModel.class)
+    public void sellItem(CharacterEntity character, InventoryEntity inventory, MarketPlaceEntity marketPlace, AccountEntity account) {
+        this.accountUtils.depositBalance(marketPlace, account);
+        this.accountUtils.withdrawBalance(marketPlace, account);
+
+        this.inventoryUtils.changeOwner(character, inventory);
+        this.inventoryUtils.setOnMarket(inventory, false);
+
+        marketPlace.setSold(true);
+        this.marketPlaceRepository.save(marketPlace);
+
+        this.inboxUtils.addInbox(
+                marketPlace.getCharacter(),
+                "Your " + marketPlace.getInventory().getName() + " has been sold.");
+    }
+
+    public void deleteMarketPlaceById(Integer id) {
+        this.marketPlaceRepository.deleteById(id);
     }
 
     public boolean checkItemIdIsNotEquals(MarketPlaceEntity market, InventoryEntity inventory) {

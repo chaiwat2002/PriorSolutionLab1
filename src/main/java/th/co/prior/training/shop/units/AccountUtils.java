@@ -1,24 +1,27 @@
 package th.co.prior.training.shop.units;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import th.co.prior.training.shop.entity.AccountEntity;
 import th.co.prior.training.shop.entity.CharacterEntity;
+import th.co.prior.training.shop.entity.MarketPlaceEntity;
 import th.co.prior.training.shop.model.AccountModel;
+import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.repository.AccountRepository;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class AccountUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountUtils.class);
     private final AccountRepository accountRepository;
 
     public List<AccountModel> toDTOList(List<AccountEntity> account) {
@@ -41,46 +44,45 @@ public class AccountUtils {
         return accountRepository.findAll();
     }
 
-    public AccountEntity findAccountById(Integer id){
-        return accountRepository.findById(id).orElse(null);
+    public Optional<AccountEntity> findAccountById(Integer id){
+        return accountRepository.findById(id);
     }
 
-    public AccountEntity findAccountByCharacterId(Integer characterId){
-        return this.accountRepository.findAccountByCharacterId(characterId).orElse(null);
+
+    public Optional<AccountEntity> findAccountByCharacterId(Integer characterId){
+        return this.accountRepository.findAccountByCharacterId(characterId);
     }
 
-    public void createAccount(CharacterEntity character) {
+    public AccountEntity createAccount(CharacterEntity character) {
+        this.findAccountByCharacterId(character.getId())
+                .orElseThrow(() -> new ExceptionModel("You already have an account.", 400));
         AccountEntity account = new AccountEntity();
         account.setAccountNumber(this.getAccountNumber());
         account.setBalance(3000.00);
         account.setCharacter(character);
-        this.accountRepository.save(account);
-
+        return this.accountRepository.save(account);
     }
 
-    public void depositBalance(Integer id, double balance) {
-        try {
-            AccountEntity account = this.accountRepository.findAccountByCharacterId(id).orElseThrow(() -> new RuntimeException("Can't deposit balance because character not found!"));
-
-            double total = this.formatDecimal(account.getBalance() + balance);
-            account.setBalance(total);
-            this.accountRepository.save(account);
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+    public AccountEntity updateAccount(AccountEntity account, double balance) {
+        account.setBalance(balance);
+        return this.accountRepository.save(account);
     }
 
-    public void withdrawBalance(Integer id, double balance) {
-        try {
-            AccountEntity account = this.accountRepository.findAccountByCharacterId(id).orElseThrow(() -> new RuntimeException("Can't withdraw balance because character not found!"));
+    public void deleteAccountById(Integer id) {
+        this.accountRepository.deleteById(id);
+    }
 
-            double total = this.formatDecimal(account.getBalance() - balance);
+
+    public void depositBalance(MarketPlaceEntity marketPlace, AccountEntity account) {
+            double total = this.formatDecimal(account.getBalance() + marketPlace.getPrice());
             account.setBalance(total);
             this.accountRepository.save(account);
-        } catch (Exception e) {
-            LOGGER.error("error: {}", e.getMessage());
-        }
+    }
 
+    public void withdrawBalance(MarketPlaceEntity marketPlace, AccountEntity account) {
+            double total = this.formatDecimal(account.getBalance() - marketPlace.getPrice());
+            account.setBalance(total);
+            this.accountRepository.save(account);
     }
 
     public String getAccountNumber(){
@@ -110,4 +112,5 @@ public class AccountUtils {
 
         return Double.parseDouble(balance);
     }
+
 }

@@ -1,5 +1,6 @@
 package th.co.prior.training.shop.service;
 
+import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
 
@@ -18,5 +19,5 @@ public interface MonsterService {
 
     ResponseModel<MonsterModel> deleteMonster(Integer id);
 
-    ResponseModel<MonsterModel> attackMonster(Integer characterId, String monsterName);
+    ResponseModel<Object> attackMonster(Integer characterId, String monsterName);
 }

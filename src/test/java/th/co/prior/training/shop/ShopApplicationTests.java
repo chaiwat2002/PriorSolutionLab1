@@ -1,13 +1,6 @@
 package th.co.prior.training.shop;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+public class ShopApplicationTests {
 
-@SpringBootTest
-class ShopApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
 
 }

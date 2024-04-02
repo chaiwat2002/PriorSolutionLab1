@@ -1,6 +1,7 @@
 package th.co.prior.training.shop;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,10 +14,11 @@ import th.co.prior.training.shop.repository.AccountRepository;
 import th.co.prior.training.shop.repository.CharacterRepository;
 import th.co.prior.training.shop.repository.LevelRepository;
 import th.co.prior.training.shop.repository.MonsterRepository;
-import th.co.prior.training.shop.units.AccountUtils;
+import th.co.prior.training.shop.component.utils.AccountUtils;
 
 @SpringBootApplication
 @AllArgsConstructor
+@Slf4j
 public class ShopApplication {
 
     private final CharacterRepository characterRepository;
@@ -32,6 +34,12 @@ public class ShopApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
+            this.insertDefaultValue();
+        };
+    }
+
+    private void insertDefaultValue(){
+        try {
             for (int i = 1; i <= 100; i++) {
                 LevelEntity level = new LevelEntity();
                 level.setId(i);
@@ -95,7 +103,9 @@ public class ShopApplication {
             accountRepository.save(account1);
             accountRepository.save(account2);
             accountRepository.save(account3);
-        };
+        } catch (Exception e) {
+            log.error("Error: {}", e.getMessage());
+        }
     }
 
 }

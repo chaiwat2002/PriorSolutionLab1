@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface InventoryRepository extends JpaRepository<InventoryEntity, Integer> {
 
+    List<InventoryEntity> findInventoryByCharacterId(Integer id);
     Optional<InventoryEntity> findInventoryByName(String name);
 }

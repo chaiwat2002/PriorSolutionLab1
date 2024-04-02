@@ -1,5 +1,6 @@
 package th.co.prior.training.shop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +20,8 @@ public class AccountEntity {
     @Column(name = "balance", nullable = false)
     private double balance;
 
-    @OneToOne()
+    @JsonIgnore
+    @OneToOne
     @JoinColumn(name = "character_id", referencedColumnName = "character_id", nullable = false)
     private CharacterEntity character;
 

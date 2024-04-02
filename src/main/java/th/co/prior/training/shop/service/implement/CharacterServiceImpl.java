@@ -7,7 +7,7 @@ import th.co.prior.training.shop.model.CharacterModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.service.CharacterService;
-import th.co.prior.training.shop.units.CharacterUtils;
+import th.co.prior.training.shop.component.utils.CharacterUtils;
 
 import java.util.List;
 

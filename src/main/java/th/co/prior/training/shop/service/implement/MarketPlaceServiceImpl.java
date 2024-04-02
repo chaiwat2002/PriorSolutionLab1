@@ -1,8 +1,11 @@
 package th.co.prior.training.shop.service.implement;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import th.co.prior.training.shop.component.utils.AccountUtils;
+import th.co.prior.training.shop.component.utils.CharacterUtils;
+import th.co.prior.training.shop.component.utils.InventoryUtils;
+import th.co.prior.training.shop.component.utils.MarketPlaceUtils;
 import th.co.prior.training.shop.entity.AccountEntity;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
@@ -11,12 +14,9 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.MarketPlaceModel;
 import th.co.prior.training.shop.model.ResponseModel;
-import th.co.prior.training.shop.repository.MarketPlaceRepository;
 import th.co.prior.training.shop.service.*;
-import th.co.prior.training.shop.units.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

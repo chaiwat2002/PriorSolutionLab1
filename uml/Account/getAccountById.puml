@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title GET /prior/api/v1/account/{id}
+
+actor User as u
+database API as a
+database Database as d
+
+u->a : GET /prior/api/v1/account/{id}
+a->d: Find account by id
+d-->a : Account data
+a->a : Validate account
+
+alt Account found
+    a->u : 200 OK
+    a->u : "Data retrieved successfully"
+    a->u : JSON Account data
+else Account not found
+    a->u : 404 Not Found
+    a->u : "Account not found"
+end
+
+@enduml

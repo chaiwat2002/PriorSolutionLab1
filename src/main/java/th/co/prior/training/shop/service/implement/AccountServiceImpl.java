@@ -8,8 +8,8 @@ import th.co.prior.training.shop.model.AccountModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.service.AccountService;
-import th.co.prior.training.shop.units.AccountUtils;
-import th.co.prior.training.shop.units.CharacterUtils;
+import th.co.prior.training.shop.component.utils.AccountUtils;
+import th.co.prior.training.shop.component.utils.CharacterUtils;
 
 import java.util.List;
 

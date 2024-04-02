@@ -11,6 +11,8 @@ public interface InventoryService {
 
     ResponseModel<InventoryModel> getInventoryById(Integer id);
 
+    ResponseModel<List<InventoryModel>> getInventoryByCharacterId(Integer id);
+
     ResponseModel<InventoryModel> createInventory(String name, Integer characterId, Integer monsterId);
 
     ResponseModel<InventoryModel> updateInventory(Integer id, String name, Integer characterId, Integer monsterId);

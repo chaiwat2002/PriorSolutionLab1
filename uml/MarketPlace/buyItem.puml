@@ -1,0 +1,64 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title POST /prior/api/v1/market/buy
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a: POST /prior/api/v1/market/buy
+a->d : Find marketplace by id
+a->a : Validate marketplace
+
+alt Marketplace found
+    a->d: Find character by id
+    d-->a: Character data
+    a->a : Validate character
+
+    alt Character found
+        a->d: Find inventory by id
+        d-->a : Inventory data
+        a->a : Validate inventory
+
+        alt Inventory found
+            a->d : Find account by id
+            a->a : Validate item status
+
+            alt Item available
+                a->a : Validate balance
+
+                alt Balance sufficient
+                    a->d : Deposit to Seller
+                    a->d : Withdraw from Buyer
+                    a->d : Change item ownership
+                    a->d : Update market status
+                    a->d : Insert into inbox
+                    a->u: 200 OK
+                    a->u: "Buy successful"
+                    a->u : JSON Inventory data
+                else Insufficient balance
+                    a->u: 400 Bad Request
+                    a->u: "Insufficient balance"
+                end
+
+            else Item sold
+                a->u: 400 Bad Request
+                a->u: "Item already sold"
+            end
+
+        else Inventory not found
+            a->u: 400 Bad Request
+            a->u: "Inventory not found"
+        end
+
+    else Character not found
+        a->u: 400 Bad Request
+        a->u: "Character not found"
+    end
+
+else Marketplace not found
+    a->u: 400 Bad Request
+    a->u: "Marketplace not found"
+end
+@enduml

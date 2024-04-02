@@ -9,9 +9,9 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.service.InventoryService;
-import th.co.prior.training.shop.units.CharacterUtils;
-import th.co.prior.training.shop.units.InventoryUtils;
-import th.co.prior.training.shop.units.MonsterUtils;
+import th.co.prior.training.shop.component.utils.CharacterUtils;
+import th.co.prior.training.shop.component.utils.InventoryUtils;
+import th.co.prior.training.shop.component.utils.MonsterUtils;
 
 import java.util.List;
 
@@ -60,6 +60,31 @@ public class InventoryServiceImpl implements InventoryService {
             result.setName("OK");
             result.setMessage("Successfully retrieved inventory information.");
             result.setData(this.inventoryUtils.toDTO(inventory));
+        } catch (ExceptionModel e) {
+            result.setStatus(e.getStatus());
+            result.setName(e.getName());
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseModel<List<InventoryModel>> getInventoryByCharacterId(Integer id) {
+        ResponseModel<List<InventoryModel>> result = new ResponseModel<>();
+        result.setStatus(404);
+        result.setName("Not Found");
+        result.setMessage("Inventory not found!");
+
+        try {
+            List<InventoryEntity> inventory = this.inventoryUtils.findInventoryByCharacterId(id);
+
+            if(inventory.iterator().hasNext()) {
+                result.setStatus(200);
+                result.setName("OK");
+                result.setMessage("Successfully retrieved inventories information.");
+                result.setData(this.inventoryUtils.toDTOList(inventory));
+            }
         } catch (ExceptionModel e) {
             result.setStatus(e.getStatus());
             result.setName(e.getName());

@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title POST /prior/api/v1/market/sell
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a: POST /prior/api/v1/market/sell
+
+a->d: Find character by id
+d-->a: Character data
+a->a : Validate character
+
+alt Character found
+    a->d: Find inventory by id
+    d-->a: Inventory data
+    a->a : Validate inventory
+
+    alt Inventory found
+        a->d : Find marketplace by inventory id
+        a->a : Validate marketplace
+
+        alt Market found
+            a->d: Insert into marketplace
+            a->d: Insert into inbox
+            d->a: Market data
+            a->u: 201 Created
+            a->u: "Item already added"
+            a->u: JSON Market data
+        else Market not found
+            a->u: 400 Bad Request
+            a->u: "Item already exists in marketplace"
+        end
+
+    else Inventory not found
+        a->u: 400 Bad Request
+        a->u: "Inventory not found"
+    end
+
+else Character not found
+    a->u: 400 Bad Request
+    a->u: "Character not found"
+end
+
+@enduml

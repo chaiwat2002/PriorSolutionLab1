@@ -6,14 +6,10 @@ import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.model.CharacterModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
-import th.co.prior.training.shop.repository.CharacterRepository;
 import th.co.prior.training.shop.service.CharacterService;
-import th.co.prior.training.shop.units.AccountUtils;
-import th.co.prior.training.shop.units.CharacterUtils;
-import th.co.prior.training.shop.units.LevelUtils;
+import th.co.prior.training.shop.component.utils.CharacterUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -74,7 +70,10 @@ public class CharacterServiceImpl implements CharacterService {
         result.setName("Bad Request");
 
         try {
-            if(name.length() >= 3) {
+            this.characterUtils.findCharacterByName(name)
+                    .ifPresent(e -> { throw new ExceptionModel("Duplicate name. Please enter another name.", 400); });
+
+            if (name.length() >= 3) {
                 CharacterEntity saved = this.characterUtils.createCharacter(name);
 
                 result.setStatus(201);
@@ -102,6 +101,8 @@ public class CharacterServiceImpl implements CharacterService {
         try {
             CharacterEntity character = this.characterUtils.findCharacterById(id)
                     .orElseThrow(() -> new ExceptionModel("Account not found!", 404));
+            this.characterUtils.findCharacterByName(name)
+                    .ifPresent(e -> { throw new ExceptionModel("Duplicate name. Please enter another name.", 400); });
 
             if(name.length() >= 3) {
                 CharacterEntity saved = this.characterUtils.updateCharacter(character, name);

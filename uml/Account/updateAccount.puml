@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title PUT /prior/api/v1/account/update/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : PUT /prior/api/v1/account/update/{id}
+a->d: Find account by id
+d-->a : Default account data
+a->a : Validate account
+
+alt Account found
+    a->d : Update account
+    d-->a : Updated account data
+    a->u : 200 OK
+    a->u : "Successfully updated data"
+    a->u : JSON Account data
+else Account not found
+    a->u : 404 Not Found
+    a->u : "Account not found"
+end
+
+@enduml

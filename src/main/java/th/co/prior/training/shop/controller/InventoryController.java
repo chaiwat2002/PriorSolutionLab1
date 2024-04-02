@@ -29,6 +29,12 @@ public class InventoryController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @GetMapping("/character/{id}")
+    public ResponseEntity<ResponseModel<List<InventoryModel>>> getInventoryByCharacterId(@PathVariable Integer id){
+        ResponseModel<List<InventoryModel>> response = this.inventoryService.getInventoryByCharacterId(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @PostMapping("/")
     public ResponseEntity<ResponseModel<InventoryModel>> createCharacter(@RequestBody InventoryRequest request){
         ResponseModel<InventoryModel> response = this.inventoryService.createInventory(request.getName(), request.getCharacterId(), request.getMonsterId());

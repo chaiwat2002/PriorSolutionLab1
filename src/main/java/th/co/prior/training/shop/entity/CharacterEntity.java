@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "characters")
-public class CharacterEntity {
+public class    CharacterEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,6 @@ public class CharacterEntity {
     @JoinColumn(name = "level_id", referencedColumnName = "level_id", nullable = false)
     private LevelEntity level;
 
-    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "character", cascade = CascadeType.ALL)
     private AccountEntity account;
 

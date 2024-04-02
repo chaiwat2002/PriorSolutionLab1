@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title GET /prior/api/v1/inbox/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : GET /prior/api/v1/inbox/{id}
+a->d: Find inbox by id
+d-->a : Inbox data
+a->a : Validate inbox
+
+alt Inbox found
+    a->u : 200 OK
+    a->u : "Data retrieved successfully"
+    a->u : JSON Inbox data
+else Inbox not found
+    a->u : 404 Not Found
+    a->u : "Inbox not found"
+end
+
+@enduml

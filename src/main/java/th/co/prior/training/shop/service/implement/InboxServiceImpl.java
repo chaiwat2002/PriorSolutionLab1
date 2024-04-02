@@ -6,9 +6,8 @@ import th.co.prior.training.shop.entity.InboxEntity;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InboxModel;
 import th.co.prior.training.shop.model.ResponseModel;
-import th.co.prior.training.shop.repository.InboxRepository;
 import th.co.prior.training.shop.service.InboxService;
-import th.co.prior.training.shop.units.InboxUtils;
+import th.co.prior.training.shop.component.utils.InboxUtils;
 
 import java.util.List;
 

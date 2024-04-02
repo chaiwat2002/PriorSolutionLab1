@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title GET /prior/api/v1/market/{id}
+
+actor User as u
+entity API as a
+database Database as d
+
+u->a : GET /prior/api/v1/market/{id}
+a->d: Find market by id
+d-->a : Market data
+a->a : Validate market
+
+alt Market found
+    a->u : 200 OK
+    a->u : "Data retrieved successfully"
+    a->u : JSON Market data
+else Market not found
+    a->u : 404 Not Found
+    a->u : "Market not found"
+end
+
+@enduml

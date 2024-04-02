@@ -1,5 +1,6 @@
 package th.co.prior.training.shop.service;
 
+import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.model.CharacterModel;
 import th.co.prior.training.shop.model.ResponseModel;
 

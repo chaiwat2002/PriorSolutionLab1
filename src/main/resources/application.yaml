@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: shop
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/app_db
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+app:
+  config:
+    kafka:
+      server: localhost:29092
+      topic: notification
+      partitions: 1

@@ -1,6 +1,7 @@
 package th.co.prior.training.shop.service.implement;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
@@ -8,6 +9,10 @@ import th.co.prior.training.shop.entity.MonsterEntity;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
+import th.co.prior.training.shop.repository.CharacterRepository;
+import th.co.prior.training.shop.repository.InventoryRepository;
+import th.co.prior.training.shop.repository.MonsterRepository;
+import th.co.prior.training.shop.service.InventoryService;
 import th.co.prior.training.shop.service.MonsterService;
 import th.co.prior.training.shop.component.utils.CharacterUtils;
 import th.co.prior.training.shop.component.utils.InventoryUtils;
@@ -17,11 +22,14 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class MonsterServiceImpl<T> implements MonsterService {
+@Slf4j
+public class MonsterServiceImpl implements MonsterService {
 
+    private final MonsterRepository monsterRepository;
+    private final CharacterRepository characterRepository;
+    private final InventoryRepository inventoryRepository;
     private final MonsterUtils monsterUtils;
-    private final CharacterUtils characterUtils;
-    private final InventoryUtils inventoryUtils;
+
     @Override
     public ResponseModel<List<MonsterModel>> getAllMonster() {
         ResponseModel<List<MonsterModel>> result = new ResponseModel<>();
@@ -30,15 +38,16 @@ public class MonsterServiceImpl<T> implements MonsterService {
         result.setMessage("Monster not found!");
 
         try {
-            List<MonsterEntity> monsters = this.monsterUtils.findAllMonster();
+            List<MonsterEntity> monsters = this.monsterRepository.findAll();
 
-            if(monsters.iterator().hasNext()) {
+            if (monsters.iterator().hasNext()) {
                 result.setStatus(200);
                 result.setName("OK");
                 result.setMessage("Successfully retrieved monsters information.");
                 result.setData(this.monsterUtils.toDTOList(monsters));
             }
         } catch (ExceptionModel e) {
+            log.error("Error occurred while searching monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());
@@ -52,7 +61,7 @@ public class MonsterServiceImpl<T> implements MonsterService {
         ResponseModel<MonsterModel> result = new ResponseModel<>();
 
         try {
-            MonsterEntity monsters = this.monsterUtils.findMonsterById(id)
+            MonsterEntity monsters = this.monsterRepository.findById(id)
                     .orElseThrow(() -> new ExceptionModel("Monster not found!", 404));
 
             result.setStatus(200);
@@ -60,6 +69,7 @@ public class MonsterServiceImpl<T> implements MonsterService {
             result.setMessage("Successfully retrieved monster information.");
             result.setData(this.monsterUtils.toDTO(monsters));
         } catch (ExceptionModel e) {
+            log.error("Error occurred while searching monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());
@@ -73,18 +83,28 @@ public class MonsterServiceImpl<T> implements MonsterService {
         ResponseModel<MonsterModel> result = new ResponseModel<>();
 
         try {
-            this.monsterUtils.findMonsterByName(name)
-                    .ifPresent(e -> { throw new ExceptionModel("You already have an monster.", 400); });
-            this.monsterUtils.findMonsterByDropItem(dropItem)
-                    .ifPresent(e -> { throw new ExceptionModel("You already have an drop item.", 400); });
+            this.monsterRepository.findMonsterByName(name)
+                    .ifPresent(e -> {
+                        throw new ExceptionModel("You already have an monster.", 400);
+                    });
+            this.monsterRepository.findMonsterByDropItem(dropItem)
+                    .ifPresent(e -> {
+                        throw new ExceptionModel("You already have an drop item.", 400);
+                    });
 
-            MonsterEntity saved = this.monsterUtils.createMonster(name, maxHealth, dropItem);
+            MonsterEntity monster = new MonsterEntity();
+            monster.setName(name);
+            monster.setMaxHealth(maxHealth);
+            monster.setDropItem(dropItem);
+
+            MonsterEntity saved = this.monsterRepository.save(monster);
 
             result.setStatus(201);
             result.setName("Created");
             result.setMessage("Successfully created monster information.");
             result.setData(this.monsterUtils.toDTO(saved));
         } catch (ExceptionModel e) {
+            log.error("Error occurred while creating monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());
@@ -98,10 +118,22 @@ public class MonsterServiceImpl<T> implements MonsterService {
         ResponseModel<MonsterModel> result = new ResponseModel<>();
 
         try {
-            MonsterEntity monster = this.monsterUtils.findMonsterById(id)
-                    .orElseThrow(() -> new ExceptionModel("Monster noy found!", 404));
+            this.monsterRepository.findMonsterByName(name)
+                    .ifPresent(e -> {
+                        throw new ExceptionModel("You already have an monster.", 400);
+                    });
+            this.monsterRepository.findMonsterByDropItem(dropItem)
+                    .ifPresent(e -> {
+                        throw new ExceptionModel("You already have an drop item.", 400);
+                    });
+            MonsterEntity monster = this.monsterRepository.findById(id)
+                    .orElseThrow(() -> new ExceptionModel("Monster not found!", 404));
 
-            MonsterEntity saved = this.monsterUtils.updateMonster(monster, name, maxHealth, dropItem);
+            monster.setName(name);
+            monster.setMaxHealth(maxHealth);
+            monster.setDropItem(dropItem);
+
+            MonsterEntity saved = this.monsterRepository.save(monster);
 
             result.setStatus(200);
             result.setName("OK");
@@ -109,6 +141,7 @@ public class MonsterServiceImpl<T> implements MonsterService {
             result.setData(this.monsterUtils.toDTO(saved));
 
         } catch (ExceptionModel e) {
+            log.error("Error occurred while updating monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());
@@ -122,15 +155,16 @@ public class MonsterServiceImpl<T> implements MonsterService {
         ResponseModel<MonsterModel> result = new ResponseModel<>();
 
         try {
-            this.monsterUtils.findMonsterById(id)
+            this.monsterRepository.findById(id)
                     .orElseThrow(() -> new ExceptionModel("Monster not found!", 404));
-            this.monsterUtils.deleteMonsterById(id);
+            this.monsterRepository.deleteById(id);
 
             result.setStatus(200);
             result.setName("OK");
             result.setMessage("Monster information has been deleted.");
             result.setData(null);
         } catch (ExceptionModel e) {
+            log.error("Error occurred while deleting monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());
@@ -146,25 +180,26 @@ public class MonsterServiceImpl<T> implements MonsterService {
         result.setMessage("Bad Request");
 
         try {
-            CharacterEntity character = this.characterUtils.findCharacterById(characterId)
+            CharacterEntity character = this.characterRepository.findById(characterId)
                     .orElseThrow(() -> new ExceptionModel("Character not found!", 404));
-            MonsterEntity monster = this.monsterUtils.findMonsterByName(monsterName)
+            MonsterEntity monster = this.monsterRepository.findMonsterByName(monsterName)
                     .orElseThrow(() -> new ExceptionModel("Monster not found!", 404));
 
-                if (monster.getMaxHealth() <= character.getLevel().getDamage()) {
-                    InventoryEntity saved = this.inventoryUtils.createInventory(monster, character);
+            if (monster.getMaxHealth() <= character.getLevel().getDamage()) {
+                this.inventoryRepository.save(new InventoryEntity(monster.getDropItem(), character, monster));
 
-                    result.setStatus(200);
-                    result.setName("OK");
-                    result.setMessage("You have successfully killed the boss. You have received a " + monster.getDropItem());
-                    result.setData(this.inventoryUtils.toDTO(saved));
-                } else {
-                    result.setStatus(200);
-                    result.setName("OK");
-                    result.setMessage("You have been killed by " + monster.getName() + ". Because the damage is not enough");
-                    result.setData(this.monsterUtils.toDTO(monster));
-                }
+                result.setStatus(200);
+                result.setName("OK");
+                result.setMessage("You have successfully killed the boss. You have received a " + monster.getDropItem());
+                result.setData(this.monsterUtils.toDTO(monster));
+            } else {
+                result.setStatus(200);
+                result.setName("OK");
+                result.setMessage("You have been killed by " + monster.getName() + ". Because the damage is not enough");
+                result.setData(this.monsterUtils.toDTO(monster));
+            }
         } catch (ExceptionModel e) {
+            log.error("Error occurred while attacking monster", e);
             result.setStatus(e.getStatus());
             result.setName(e.getName());
             result.setMessage(e.getMessage());

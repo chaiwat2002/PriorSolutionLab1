@@ -12,7 +12,7 @@ a->a : Validate inputs
 alt Valid inputs
     a->d : Find character by name
     d-->a : Default character data
-    a->a : Validate character
+        a->a : Validate character
 
     alt Character not found
         a->d : Update character

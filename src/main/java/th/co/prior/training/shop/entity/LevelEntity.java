@@ -2,13 +2,13 @@ package th.co.prior.training.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Set;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "level")
 public class LevelEntity {
 

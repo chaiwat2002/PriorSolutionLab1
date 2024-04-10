@@ -9,6 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "level")
 public class LevelEntity {
 
@@ -17,6 +18,7 @@ public class LevelEntity {
     @Column(name = "level_id")
     private Integer id;
 
+    @NonNull
     @Column(name = "damage", nullable = false)
     private Integer damage;
 

@@ -29,6 +29,7 @@ public class MonsterServiceImpl implements MonsterService {
     private final CharacterRepository characterRepository;
     private final InventoryRepository inventoryRepository;
     private final MonsterUtils monsterUtils;
+    private final InventoryUtils inventoryUtils;
 
     @Override
     public ResponseModel<List<MonsterModel>> getAllMonster() {
@@ -139,7 +140,6 @@ public class MonsterServiceImpl implements MonsterService {
             result.setName("OK");
             result.setMessage("Monster information has been successfully updated.");
             result.setData(this.monsterUtils.toDTO(saved));
-
         } catch (ExceptionModel e) {
             log.error("Error occurred while updating monster", e);
             result.setStatus(e.getStatus());
@@ -186,12 +186,12 @@ public class MonsterServiceImpl implements MonsterService {
                     .orElseThrow(() -> new ExceptionModel("Monster not found!", 404));
 
             if (monster.getMaxHealth() <= character.getLevel().getDamage()) {
-                this.inventoryRepository.save(new InventoryEntity(monster.getDropItem(), character, monster));
+                InventoryEntity inventory = this.inventoryRepository.save(new InventoryEntity(monster.getDropItem(), character, monster));
 
                 result.setStatus(200);
                 result.setName("OK");
                 result.setMessage("You have successfully killed the boss. You have received a " + monster.getDropItem());
-                result.setData(this.monsterUtils.toDTO(monster));
+                result.setData(this.inventoryUtils.toDTO(inventory));
             } else {
                 result.setStatus(200);
                 result.setName("OK");

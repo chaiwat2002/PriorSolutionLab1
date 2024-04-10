@@ -39,7 +39,7 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
     public ResponseModel<List<MarketPlaceModel>> getAllMarkerPlace() {
         ResponseModel<List<MarketPlaceModel>> result = new ResponseModel<>();
         result.setStatus(404);
-        result.setName("Not Found!");
+        result.setName("Not Found");
         result.setMessage("Market not found!");
 
         try {
@@ -145,10 +145,12 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
                     .orElseThrow(() -> new ExceptionModel("Character not found!", 404));
             InventoryEntity inventory = this.inventoryRepository.findById(itemId)
                     .orElseThrow(() -> new ExceptionModel("Inventory not found!", 404));
-            MarketPlaceEntity marketPlaces = this.marketPlaceRepository.findMarketPlaceByInventoryId(inventory.getId())
-                    .orElse(null);
+            this.marketPlaceRepository.findMarketPlaceByInventoryId(inventory.getId())
+                    .ifPresent(e -> {
+                        throw new ExceptionModel("You already have " + inventory.getName() + " on the market.", 400);
+                    });
 
-            if (checkItemIdIsNotEquals(marketPlaces, inventory) && hasOwner(character, inventory)) {
+            if (hasOwner(character, inventory)) {
                     double balance = this.accountUtils.formatDecimal(price);
 
                     inventory.setOnMarket(true);
@@ -165,9 +167,7 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
             } else {
                 result.setStatus(400);
                 result.setName("Bad Request");
-                result.setMessage(!hasOwner(character, inventory) ?
-                        "Item not found!"
-                        : "You already have " + inventory.getName() + " on the market.");
+                result.setMessage("Item not found!");
             }
         } catch (ExceptionModel e) {
             log.error("Error occurred while creating market", e);
@@ -200,10 +200,6 @@ public class MarketPlaceServiceImpl implements MarketPlaceService {
         }
 
         return result;
-    }
-
-    private boolean checkItemIdIsNotEquals(MarketPlaceEntity market, InventoryEntity inventory) {
-        return Objects.isNull(market) || !(market.getInventory().isOnMarket() && market.getInventory().getId().equals(inventory.getId()));
     }
 
     private boolean hasOwner(CharacterEntity character, InventoryEntity inventory) {

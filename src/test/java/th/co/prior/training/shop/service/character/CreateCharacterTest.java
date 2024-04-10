@@ -43,8 +43,6 @@ public class CreateCharacterTest {
 
     @Before
     public void setUp() {
-        when(characterRepository.findCharacterByName("cwpd")).thenReturn(Optional.of(new CharacterEntity()));
-        when(levelRepository.findById(any())).thenReturn(Optional.of(new LevelEntity()));
         when(characterRepository.save(any())).thenReturn(new CharacterEntity());
         when(accountRepository.save(any())).thenReturn(new AccountEntity());
         when(characterUtils.toDTO(any())).thenReturn(new CharacterModel());
@@ -52,7 +50,9 @@ public class CreateCharacterTest {
 
 
     @Test
-    public void testCreateCharacter_ShouldReturnStatusOK() {
+    public void testCreateCharacter_ShouldReturnStatusCreated() {
+        when(levelRepository.findById(any())).thenReturn(Optional.of(new LevelEntity()));
+
         ResponseModel<CharacterModel> result = characterService.createCharacter("ion");
 
         assertThat(result.getName()).isEqualTo("Created");
@@ -62,6 +62,8 @@ public class CreateCharacterTest {
 
     @Test
     public void testCreateCharacter_ShouldReturnStatusBadRequest() {
+        when(characterRepository.findCharacterByName("cwpd")).thenReturn(Optional.of(new CharacterEntity()));
+
         ResponseModel<CharacterModel> result = characterService.createCharacter("cwpd");
 
         assertThat(result.getName()).isEqualTo("Bad Request");

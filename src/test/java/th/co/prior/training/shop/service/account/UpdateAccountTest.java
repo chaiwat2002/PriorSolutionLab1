@@ -30,13 +30,10 @@ public class UpdateAccountTest {
     @Mock
     private AccountRepository accountRepository;
     @Mock
-    private CharacterRepository characterRepository;
-    @Mock
     private AccountUtils accountUtils;
 
     @Before
     public void setUp() {
-        when(characterRepository.findById(any())).thenReturn(Optional.of(new CharacterEntity()));
         when(accountRepository.findById(1)).thenReturn(Optional.of(new AccountEntity()));
         when(accountUtils.toDTO(any())).thenReturn(new AccountModel());
     }

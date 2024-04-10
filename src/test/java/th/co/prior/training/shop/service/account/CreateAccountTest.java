@@ -37,13 +37,14 @@ public class CreateAccountTest {
     @Before
     public void setUp() {
         when(characterRepository.findById(any())).thenReturn(Optional.of(new CharacterEntity()));
-        when(accountRepository.findById(2)).thenReturn(Optional.of(new AccountEntity()));
         when(accountUtils.toDTO(any())).thenReturn(new AccountModel());
     }
 
 
     @Test
-    public void testCreateAccount_ShouldReturnStatusOK() {
+    public void testCreateAccount_ShouldReturnStatusCreated() {
+        when(accountRepository.findById(any())).thenReturn(Optional.empty());
+
         ResponseModel<AccountModel> result = accountService.createAccount(1, 4000);
 
         assertThat(result.getName()).isEqualTo("Created");
@@ -53,6 +54,8 @@ public class CreateAccountTest {
 
     @Test
     public void testCreateAccount_ShouldReturnStatusBadRequest() {
+        when(accountRepository.findById(2)).thenReturn(Optional.of(new AccountEntity()));
+
         ResponseModel<AccountModel> result = accountService.createAccount(2, 4000);
 
         assertThat(result.getName()).isEqualTo("Bad Request");

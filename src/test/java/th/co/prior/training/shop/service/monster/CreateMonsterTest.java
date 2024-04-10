@@ -6,17 +6,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import th.co.prior.training.shop.component.utils.CharacterUtils;
-import th.co.prior.training.shop.entity.AccountEntity;
-import th.co.prior.training.shop.entity.CharacterEntity;
-import th.co.prior.training.shop.entity.LevelEntity;
-import th.co.prior.training.shop.model.CharacterModel;
+import th.co.prior.training.shop.component.utils.MonsterUtils;
+import th.co.prior.training.shop.entity.MonsterEntity;
 import th.co.prior.training.shop.model.ExceptionModel;
+import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
-import th.co.prior.training.shop.repository.AccountRepository;
-import th.co.prior.training.shop.repository.CharacterRepository;
-import th.co.prior.training.shop.repository.LevelRepository;
-import th.co.prior.training.shop.service.implement.CharacterServiceImpl;
+import th.co.prior.training.shop.repository.MonsterRepository;
+import th.co.prior.training.shop.service.implement.MonsterServiceImpl;
 
 import java.util.Optional;
 
@@ -28,29 +24,23 @@ import static org.mockito.Mockito.when;
 public class CreateMonsterTest {
 
     @InjectMocks
-    private CharacterServiceImpl characterService;
+    private MonsterServiceImpl monsterService;
     @Mock
-    private CharacterRepository characterRepository;
+    private MonsterRepository monsterRepository;
     @Mock
-    private AccountRepository accountRepository;
-    @Mock
-    private LevelRepository levelRepository;
-    @Mock
-    private CharacterUtils characterUtils;
+    private MonsterUtils monsterUtils;
 
     @Before
     public void setUp() {
-        when(characterRepository.findCharacterByName("cwpd")).thenReturn(Optional.of(new CharacterEntity()));
-        when(levelRepository.findById(any())).thenReturn(Optional.of(new LevelEntity()));
-        when(characterRepository.save(any())).thenReturn(new CharacterEntity());
-        when(accountRepository.save(any())).thenReturn(new AccountEntity());
-        when(characterUtils.toDTO(any())).thenReturn(new CharacterModel());
+        when(monsterRepository.findMonsterByDropItem("Sword")).thenReturn(Optional.of(new MonsterEntity()));
+        when(monsterRepository.save(any())).thenReturn(new MonsterEntity());
+        when(monsterUtils.toDTO(any())).thenReturn(new MonsterModel());
     }
 
 
     @Test
-    public void testCreateCharacter_ShouldReturnStatusOK() {
-        ResponseModel<CharacterModel> result = characterService.createCharacter("ion");
+    public void testCreateMonster_ShouldReturnStatusOK() {
+        ResponseModel<MonsterModel> result = monsterService.createMonster("Goku", 50000, "Magic sword");
 
         assertThat(result.getName()).isEqualTo("Created");
         assertThat(result.getStatus()).isEqualTo(201);
@@ -58,8 +48,8 @@ public class CreateMonsterTest {
     }
 
     @Test
-    public void testCreateCharacter_ShouldReturnStatusBadRequest() {
-        ResponseModel<CharacterModel> result = characterService.createCharacter("cwpd");
+    public void testCreateMonster_ShouldReturnStatusBadRequest() {
+        ResponseModel<MonsterModel> result = monsterService.createMonster("Goku", 50000, "Sword");
 
         assertThat(result.getName()).isEqualTo("Bad Request");
         assertThat(result.getStatus()).isEqualTo(400);
@@ -67,10 +57,10 @@ public class CreateMonsterTest {
     }
 
     @Test
-    public void testCreateCharacter_ShouldThrowStatusInternalServerError() {
-        when(levelRepository.findById(any())).thenThrow(new ExceptionModel());
+    public void testCreateMonster_ShouldThrowStatusInternalServerError() {
+        when(monsterRepository.save(any())).thenThrow(new ExceptionModel());
 
-        ResponseModel<CharacterModel> result = characterService.createCharacter("ion");
+        ResponseModel<MonsterModel> result = monsterService.createMonster("Goku", 50000, "Magic sword");
 
         assertThat(result.getName()).isEqualTo("Internal Server Error");
         assertThat(result.getStatus()).isEqualTo(500);

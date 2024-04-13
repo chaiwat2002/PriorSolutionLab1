@@ -1,15 +1,23 @@
 package th.co.prior.training.shop.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class ExceptionModel extends RuntimeException {
 
-    private Integer status = 500;
+    private int status = 500;
     private String name = "Internal Server Error";
 
-    public ExceptionModel(String message, Integer status){
+    public ExceptionModel(String message) {
+        super(message);
+    }
+
+    public ExceptionModel(String message, int status) {
         super(message);
         this.status = status;
         this.name = HttpStatus.valueOf(status).getReasonPhrase();

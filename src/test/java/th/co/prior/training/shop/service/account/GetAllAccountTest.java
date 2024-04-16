@@ -12,11 +12,9 @@ import th.co.prior.training.shop.model.AccountModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.AccountRepository;
-import th.co.prior.training.shop.repository.CharacterRepository;
-import th.co.prior.training.shop.service.implement.AccountServiceImpl;
+import th.co.prior.training.shop.service.AccountService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class GetAllAccountTest {
 
     @InjectMocks
-    private AccountServiceImpl accountService;
+    private AccountService accountService;
     @Mock
     private AccountRepository accountRepository;
     @Mock

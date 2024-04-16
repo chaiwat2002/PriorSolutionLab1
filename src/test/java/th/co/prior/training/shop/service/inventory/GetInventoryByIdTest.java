@@ -12,7 +12,7 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.InventoryRepository;
-import th.co.prior.training.shop.service.implement.InventoryServiceImpl;
+import th.co.prior.training.shop.service.InventoryService;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class GetInventoryByIdTest {
 
     @InjectMocks
-    private InventoryServiceImpl inventoryService;
+    private InventoryService inventoryService;
     @Mock
     private InventoryRepository inventoryRepository;
     @Mock

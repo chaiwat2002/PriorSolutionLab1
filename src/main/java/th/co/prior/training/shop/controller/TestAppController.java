@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/prior/api/v1/")
-public class ShopApplicationController {
+public class TestAppController {
 
     @GetMapping("/health/check")
     public String home(){

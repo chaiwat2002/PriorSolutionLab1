@@ -12,7 +12,7 @@ import th.co.prior.training.shop.model.CharacterModel;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.CharacterRepository;
-import th.co.prior.training.shop.service.implement.CharacterServiceImpl;
+import th.co.prior.training.shop.service.CharacterService;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class UpdateCharacterTest {
 
     @InjectMocks
-    private CharacterServiceImpl characterService;
+    private CharacterService characterService;
     @Mock
     private CharacterRepository characterRepository;
     @Mock

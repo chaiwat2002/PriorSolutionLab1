@@ -3,11 +3,10 @@ package th.co.prior.training.shop.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.model.CharacterModel;
+import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.request.CharacterRequest;
 import th.co.prior.training.shop.service.CharacterService;
-import th.co.prior.training.shop.model.ResponseModel;
 
 import java.util.List;
 

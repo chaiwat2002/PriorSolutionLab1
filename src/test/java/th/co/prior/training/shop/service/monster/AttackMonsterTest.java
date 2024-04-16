@@ -7,19 +7,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import th.co.prior.training.shop.component.utils.InventoryUtils;
-import th.co.prior.training.shop.component.utils.MonsterUtils;
 import th.co.prior.training.shop.entity.CharacterEntity;
 import th.co.prior.training.shop.entity.InventoryEntity;
 import th.co.prior.training.shop.entity.LevelEntity;
 import th.co.prior.training.shop.entity.MonsterEntity;
 import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InventoryModel;
-import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.CharacterRepository;
 import th.co.prior.training.shop.repository.InventoryRepository;
 import th.co.prior.training.shop.repository.MonsterRepository;
-import th.co.prior.training.shop.service.implement.MonsterServiceImpl;
+import th.co.prior.training.shop.service.MonsterService;
 
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class AttackMonsterTest {
 
     @InjectMocks
-    private MonsterServiceImpl monsterService;
+    private MonsterService monsterService;
     @Mock
     private MonsterRepository monsterRepository;
     @Mock

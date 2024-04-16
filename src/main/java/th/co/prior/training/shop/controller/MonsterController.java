@@ -3,7 +3,6 @@ package th.co.prior.training.shop.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import th.co.prior.training.shop.model.InventoryModel;
 import th.co.prior.training.shop.model.MonsterModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.request.AttackRequest;

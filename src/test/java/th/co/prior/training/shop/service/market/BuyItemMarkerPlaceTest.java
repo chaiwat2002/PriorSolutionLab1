@@ -20,7 +20,7 @@ import th.co.prior.training.shop.repository.AccountRepository;
 import th.co.prior.training.shop.repository.CharacterRepository;
 import th.co.prior.training.shop.repository.InventoryRepository;
 import th.co.prior.training.shop.repository.MarketPlaceRepository;
-import th.co.prior.training.shop.service.implement.MarketPlaceServiceImpl;
+import th.co.prior.training.shop.service.MarketPlaceService;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 public class BuyItemMarkerPlaceTest {
 
     @InjectMocks
-    private MarketPlaceServiceImpl marketPlaceService;
+    private MarketPlaceService marketPlaceService;
     @Mock
     private MarketPlaceRepository marketPlaceRepository;
     @Mock

@@ -12,7 +12,7 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.MarketPlaceModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.MarketPlaceRepository;
-import th.co.prior.training.shop.service.implement.MarketPlaceServiceImpl;
+import th.co.prior.training.shop.service.MarketPlaceService;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class GetMarketPlaceByIdTest {
 
     @InjectMocks
-    private MarketPlaceServiceImpl marketPlaceService;
+    private MarketPlaceService marketPlaceService;
     @Mock
     private MarketPlaceRepository marketPlaceRepository;
     @Mock

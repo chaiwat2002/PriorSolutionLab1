@@ -14,7 +14,7 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.AccountRepository;
 import th.co.prior.training.shop.repository.CharacterRepository;
-import th.co.prior.training.shop.service.implement.AccountServiceImpl;
+import th.co.prior.training.shop.service.AccountService;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class CreateAccountTest {
 
     @InjectMocks
-    private AccountServiceImpl accountService;
+    private AccountService accountService;
     @Mock
     private AccountRepository accountRepository;
     @Mock

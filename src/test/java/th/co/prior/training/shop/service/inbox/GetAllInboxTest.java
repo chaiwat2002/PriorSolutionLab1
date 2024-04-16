@@ -12,7 +12,7 @@ import th.co.prior.training.shop.model.ExceptionModel;
 import th.co.prior.training.shop.model.InboxModel;
 import th.co.prior.training.shop.model.ResponseModel;
 import th.co.prior.training.shop.repository.InboxRepository;
-import th.co.prior.training.shop.service.implement.InboxServiceImpl;
+import th.co.prior.training.shop.service.InboxService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class GetAllInboxTest {
 
     @InjectMocks
-    private InboxServiceImpl inboxService;
+    private InboxService inboxService;
     @Mock
     private InboxRepository inboxRepository;
     @Mock
